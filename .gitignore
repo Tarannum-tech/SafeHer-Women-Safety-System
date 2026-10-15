@@ -1,0 +1,26 @@
+# Python
+__pycache__/
+*.py[cod]
+*.so
+.Python
+build/
+dist/
+*.egg-info/
+
+# Flask
+instance/
+.env
+*.db
+*.sqlite3
+
+# VS Code
+.vscode/
+.idea/
+
+# Virtual Environment
+venv/
+.venv/
+env/
+
+# Model files (optional - agar size zyada hai toh)
+# model.pkl
