@@ -1,0 +1,2535 @@
+<!-- 
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Dashboard - SafeHer</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: #f5f7fa;
+        }
+        
+        .navbar {
+            background: linear-gradient(135deg, #ff4d6d, #e63e5c);
+            padding: 1rem 5%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: white;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            cursor: pointer;
+        }
+        
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            margin-left: 1.5rem;
+            transition: all 0.3s;
+        }
+        
+        .nav-links a:hover {
+            color: #ffd966;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 80px auto 0;
+            padding: 2rem;
+        }
+        
+        .welcome-card {
+            background: linear-gradient(135deg, #ff4d6d, #e63e5c);
+            color: white;
+            padding: 2rem;
+            border-radius: 20px;
+            margin-bottom: 2rem;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .welcome-card::before {
+            content: "🛡️";
+            position: absolute;
+            font-size: 150px;
+            opacity: 0.1;
+            right: -20px;
+            bottom: -40px;
+        }
+        
+        .location-badge {
+            background: rgba(255,255,255,0.2);
+            padding: 0.5rem 1rem;
+            border-radius: 50px;
+            display: inline-block;
+            margin-top: 1rem;
+        }
+        
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.05);
+            transition: all 0.3s;
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+        
+        .card h3 {
+            color: #ff4d6d;
+            margin-bottom: 1rem;
+            font-size: 1.3rem;
+        }
+        
+        .map-container {
+            height: 300px;
+            border-radius: 10px;
+            overflow: hidden;
+            margin-bottom: 1rem;
+        }
+        
+        #map {
+            height: 100%;
+            width: 100%;
+        }
+        
+        .btn {
+            padding: 0.8rem 1.5rem;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s;
+            margin-right: 0.5rem;
+            margin-top: 0.5rem;
+        }
+        
+        .btn-primary {
+            background: #ff4d6d;
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background: #e63e5c;
+            transform: translateY(-2px);
+        }
+        
+        .btn-danger {
+            background: #dc3545;
+            color: white;
+        }
+        
+        .btn-danger:hover {
+            background: #c82333;
+            transform: translateY(-2px);
+        }
+        
+        .emergency-fab {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            width: 70px;
+            height: 70px;
+            background: #dc3545;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            font-size: 2rem;
+            cursor: pointer;
+            box-shadow: 0 5px 20px rgba(220,53,69,0.4);
+            transition: all 0.3s;
+            z-index: 1000;
+            animation: pulse 2s infinite;
+        }
+        
+        .emergency-fab:hover {
+            transform: scale(1.1);
+        }
+        
+        @keyframes pulse {
+            0% {
+                box-shadow: 0 0 0 0 rgba(220,53,69,0.7);
+            }
+            70% {
+                box-shadow: 0 0 0 15px rgba(220,53,69,0);
+            }
+            100% {
+                box-shadow: 0 0 0 0 rgba(220,53,69,0);
+            }
+        }
+        
+        .info-row {
+            padding: 0.5rem 0;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .footer {
+            background: #222;
+            color: white;
+            text-align: center;
+            padding: 1.5rem;
+            margin-top: 2rem;
+        }
+        
+        @media (max-width: 768px) {
+            .navbar {
+                flex-direction: column;
+                gap: 0.5rem;
+                padding: 1rem;
+            }
+            
+            .nav-links {
+                display: flex;
+                flex-wrap: wrap;
+                justify-content: center;
+                gap: 0.5rem;
+            }
+            
+            .nav-links a {
+                margin-left: 0;
+                font-size: 0.9rem;
+            }
+            
+            .container {
+                padding: 1rem;
+                margin-top: 120px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo" onclick="location.href='/'">SafeHer</div>
+        <div class="nav-links">
+            <a href="/">Home</a>
+            <a href="/predict">Safety Check</a>
+            <a href="/help">Emergency</a>
+            <a href="/feedback">Feedback</a>
+            <a href="/profile">Profile</a>
+            <a href="/logout">Logout</a>
+        </div>
+    </nav>
+    
+    <div class="container">
+        <div class="welcome-card">
+            <h1>Welcome back, {{ user.full_name }}! 👋</h1>
+            <p>Your safety is our priority. Stay vigilant, stay safe.</p>
+            <div id="locationDisplay" class="location-badge">
+                📍 Getting your location...
+            </div>
+        </div>
+        
+        <div class="dashboard-grid">
+            <div class="card">
+                <h3>📍 Live Location Map</h3>
+                <div class="map-container">
+                    <div id="map"></div>
+                </div>
+                <div id="riskDisplay" style="margin-top: 0.5rem; font-size: 0.9rem; color: #666;"></div>
+                <button class="btn btn-primary" onclick="refreshLocation()">🔄 Refresh Location</button>
+            </div>
+            
+            <div class="card">
+                <h3>👨‍👩‍👧 Your Guardians</h3>
+                {% if guardians %}
+                    {% for relation in guardians %}
+                    <div class="info-row">
+                        <strong>{{ relation.guardian.full_name }}</strong>
+                        <span style="color: gray;">({{ relation.relationship }})</span>
+                    </div>
+                    {% endfor %}
+                {% else %}
+                    <p>No guardians added yet. Add one below!</p>
+                {% endif %}
+                
+                <form action="/add_guardian" method="POST" style="margin-top: 1rem;">
+                    <input type="text" name="guardian_username" placeholder="Guardian Username" required style="width: 100%; padding: 0.5rem; margin-bottom: 0.5rem; border: 1px solid #ddd; border-radius: 5px;">
+                    <input type="text" name="relationship" placeholder="Relationship" style="width: 100%; padding: 0.5rem; margin-bottom: 0.5rem; border: 1px solid #ddd; border-radius: 5px;">
+                    <button type="submit" class="btn btn-primary" style="width: 100%;">Add Guardian</button>
+                </form>
+            </div>
+        </div>
+        
+        <div class="dashboard-grid">
+            <div class="card">
+                <h3>📍 Quick Actions</h3>
+                <button class="btn btn-primary" onclick="location.href='/predict'">🔍 Check Area Safety</button>
+                <button class="btn btn-primary" onclick="location.href='/help'">📞 Emergency Helpline</button>
+                <button class="btn btn-primary" onclick="shareLocation()">📍 Share Location with Guardians</button>
+            </div>
+            
+            <div class="card">
+                <h3>🚨 Recent Alerts</h3>
+                {% if recent_alerts %}
+                    {% for alert in recent_alerts %}
+                    <div class="info-row" style="background: #fff3cd; margin-bottom: 0.5rem; border-radius: 5px;">
+                        <strong>{{ alert.alert_type|upper }}</strong> - Risk: {{ alert.risk_level }}%
+                        <br>
+                        <small>{{ alert.created_at.strftime('%Y-%m-%d %H:%M') }}</small>
+                        {% if alert.status == 'active' %}
+                            <span style="color: red; margin-left: 10px;">● Active</span>
+                        {% endif %}
+                    </div>
+                    {% endfor %}
+                {% else %}
+                    <p>No recent alerts</p>
+                {% endif %}
+            </div>
+        </div>
+        
+        <div class="card">
+            <h3>🚨 Safety Tips</h3>
+            <ul style="margin-left: 1.5rem; line-height: 1.8;">
+                <li>Always share your location with trusted contacts before going out</li>
+                <li>Keep emergency numbers saved in your phone</li>
+                <li>Use the red panic button in case of emergency</li>
+                <li>Avoid isolated areas, especially at night</li>
+                <li>Trust your instincts - if something feels wrong, seek help immediately</li>
+            </ul>
+        </div>
+    </div>
+    
+    <button class="emergency-fab" onclick="triggerEmergency()">🚨</button>
+    
+    <footer class="footer">
+        <p>© 2024 SafeHer - Women Safety System | Your safety companion</p>
+    </footer>
+    
+    <script>
+        let map;
+        let currentMarker;
+        let currentPosition;
+        
+        // Initialize map
+        function initMap(lat, lon) {
+            map = L.map('map').setView([lat, lon], 15);
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '© OpenStreetMap contributors'
+            }).addTo(map);
+            
+            currentMarker = L.marker([lat, lon]).addTo(map);
+            currentMarker.bindPopup('Your current location').openPopup();
+        }
+        
+        // Update location
+        function updateLocation(position) {
+            const lat = position.coords.latitude;
+            const lon = position.coords.longitude;
+            currentPosition = {lat, lon};
+            
+            document.getElementById('locationDisplay').innerHTML = 
+                '📍 Your Location: ' + lat.toFixed(6) + ', ' + lon.toFixed(6);
+            
+            if (map) {
+                map.setView([lat, lon], 15);
+                if (currentMarker) {
+                    currentMarker.setLatLng([lat, lon]);
+                } else {
+                    currentMarker = L.marker([lat, lon]).addTo(map);
+                }
+                currentMarker.bindPopup('Your current location').openPopup();
+            } else {
+                initMap(lat, lon);
+            }
+            
+            // Save location to server
+            fetch('/save_location', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({latitude: lat, longitude: lon})
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.risk) {
+                    let riskDisplay = document.getElementById('riskDisplay');
+                    if (data.risk > 70) {
+                        riskDisplay.innerHTML = '⚠️ High Risk Area! Risk Level: ' + data.risk + '%';
+                        riskDisplay.style.color = '#dc3545';
+                        riskDisplay.style.fontWeight = 'bold';
+                    } else if (data.risk > 40) {
+                        riskDisplay.innerHTML = '⚠️ Moderate Risk Area. Risk Level: ' + data.risk + '%';
+                        riskDisplay.style.color = '#ff9800';
+                    } else {
+                        riskDisplay.innerHTML = '✅ Safe Area. Risk Level: ' + data.risk + '%';
+                        riskDisplay.style.color = '#4caf50';
+                    }
+                }
+            });
+        }
+        
+        function handleLocationError(error) {
+            let message = '';
+            switch(error.code) {
+                case error.PERMISSION_DENIED:
+                    message = 'Location access denied. Please enable GPS for safety features.';
+                    break;
+                case error.POSITION_UNAVAILABLE:
+                    message = 'Location information unavailable.';
+                    break;
+                case error.TIMEOUT:
+                    message = 'Location request timed out.';
+                    break;
+                default:
+                    message = 'Unable to get your location.';
+            }
+            document.getElementById('locationDisplay').innerHTML = '📍 ' + message;
+            
+            // Default Mumbai location
+            initMap(19.0760, 72.8777);
+        }
+        
+        function refreshLocation() {
+            if(navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(updateLocation, handleLocationError, {
+                    enableHighAccuracy: true,
+                    timeout: 10000
+                });
+            }
+        }
+        
+        function triggerEmergency() {
+            if(confirm('⚠️ EMERGENCY ALERT! Are you in danger?\n\nPress OK to send immediate alert to your guardians and authorities.')) {
+                if(currentPosition) {
+                    fetch('/panic', {
+                        method: 'POST',
+                        headers: {'Content-Type': 'application/json'},
+                        body: JSON.stringify({
+                            latitude: currentPosition.lat,
+                            longitude: currentPosition.lon
+                        })
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if(data.success) {
+                            alert('🚨 Emergency alert sent!\n\nYour location has been shared with your guardians.\nHelp is on the way!');
+                        }
+                    });
+                } else {
+                    alert('🚨 Emergency alert sent!\n\nHelp is on the way!');
+                }
+            }
+        }
+        
+        function shareLocation() {
+            if(currentPosition) {
+                alert('📍 Your location has been shared with your guardians:\n\nLat: ' + currentPosition.lat.toFixed(6) + '\nLon: ' + currentPosition.lon.toFixed(6));
+            } else {
+                alert('📍 Please wait, getting your location...');
+                refreshLocation();
+                setTimeout(() => {
+                    if(currentPosition) {
+                        alert('📍 Location shared: ' + currentPosition.lat.toFixed(6) + ', ' + currentPosition.lon.toFixed(6));
+                    }
+                }, 2000);
+            }
+        }
+        
+        // Start location tracking
+        refreshLocation();
+        
+        // Track location every 30 seconds
+        setInterval(refreshLocation, 30000);
+    </script>
+</body>
+</html> -->
+
+
+
+
+
+
+
+
+
+
+<!-- <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Dashboard - SafeHer</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: #f5f7fa;
+        }
+        
+        .navbar {
+            background: linear-gradient(135deg, #ff4d6d, #e63e5c);
+            padding: 1rem 5%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: white;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            cursor: pointer;
+        }
+        
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            margin-left: 1.5rem;
+            transition: all 0.3s;
+        }
+        
+        .nav-links a:hover {
+            color: #ffd966;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 80px auto 0;
+            padding: 2rem;
+        }
+        
+        .welcome-card {
+            background: linear-gradient(135deg, #ff4d6d, #e63e5c);
+            color: white;
+            padding: 2rem;
+            border-radius: 20px;
+            margin-bottom: 2rem;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .welcome-card::before {
+            content: "🛡️";
+            position: absolute;
+            font-size: 150px;
+            opacity: 0.1;
+            right: -20px;
+            bottom: -40px;
+        }
+        
+        .location-badge {
+            background: rgba(255,255,255,0.2);
+            padding: 0.5rem 1rem;
+            border-radius: 50px;
+            display: inline-block;
+            margin-top: 1rem;
+        }
+        
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.05);
+            transition: all 0.3s;
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+        
+        .card h3 {
+            color: #ff4d6d;
+            margin-bottom: 1rem;
+            font-size: 1.3rem;
+        }
+        
+        .map-container {
+            height: 300px;
+            border-radius: 10px;
+            overflow: hidden;
+            margin-bottom: 1rem;
+        }
+        
+        #map {
+            height: 100%;
+            width: 100%;
+        }
+        
+        .btn {
+            padding: 0.8rem 1.5rem;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s;
+            margin-right: 0.5rem;
+            margin-top: 0.5rem;
+        }
+        
+        .btn-primary {
+            background: #ff4d6d;
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background: #e63e5c;
+            transform: translateY(-2px);
+        }
+        
+        .btn-danger {
+            background: #dc3545;
+            color: white;
+        }
+        
+        .btn-danger:hover {
+            background: #c82333;
+            transform: translateY(-2px);
+        }
+        
+        .btn-warning {
+            background: #ff9800;
+            color: white;
+        }
+        
+        .btn-warning:hover {
+            background: #f57c00;
+            transform: translateY(-2px);
+        }
+        
+        .btn-success {
+            background: #28a745;
+            color: white;
+        }
+        
+        .emergency-fab {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            width: 70px;
+            height: 70px;
+            background: #dc3545;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            font-size: 2rem;
+            cursor: pointer;
+            box-shadow: 0 5px 20px rgba(220,53,69,0.4);
+            transition: all 0.3s;
+            z-index: 1000;
+            animation: pulse 2s infinite;
+        }
+        
+        .emergency-fab:hover {
+            transform: scale(1.1);
+        }
+        
+        .microphone-btn {
+            position: fixed;
+            bottom: 100px;
+            right: 90px;
+            width: 55px;
+            height: 55px;
+            border-radius: 50%;
+            background: #6c757d;
+            color: white;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            z-index: 1000;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .microphone-btn.active {
+            background: #28a745;
+            animation: pulseMic 1.5s infinite;
+        }
+        
+        @keyframes pulseMic {
+            0% { box-shadow: 0 0 0 0 rgba(40, 167, 69, 0.7); }
+            70% { box-shadow: 0 0 0 15px rgba(40, 167, 69, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(40, 167, 69, 0); }
+        }
+        
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(220,53,69,0.7); }
+            70% { box-shadow: 0 0 0 15px rgba(220,53,69,0); }
+            100% { box-shadow: 0 0 0 0 rgba(220,53,69,0); }
+        }
+        
+        .voice-status-card {
+            position: fixed;
+            bottom: 170px;
+            right: 90px;
+            background: rgba(0,0,0,0.85);
+            color: white;
+            padding: 8px 15px;
+            border-radius: 25px;
+            font-size: 12px;
+            z-index: 1000;
+            display: none;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .voice-status-card.active {
+            display: flex;
+        }
+        
+        .voice-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: #28a745;
+            animation: blink 1s infinite;
+        }
+        
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
+        }
+        
+        .guardian-item {
+            background: #f8f9fa;
+            padding: 0.8rem;
+            border-radius: 10px;
+            margin-bottom: 0.8rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .guardian-name {
+            font-weight: 600;
+            color: #ff4d6d;
+        }
+        
+        .remove-btn {
+            background: #dc3545;
+            color: white;
+            border: none;
+            padding: 0.3rem 0.8rem;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.8rem;
+        }
+        
+        .alert-item {
+            background: #fff3cd;
+            padding: 0.8rem;
+            border-radius: 8px;
+            margin-bottom: 0.8rem;
+            border-left: 4px solid #ff9800;
+        }
+        
+        .alert-item.danger {
+            background: #f8d7da;
+            border-left-color: #dc3545;
+        }
+        
+        .service-card {
+            background: #f8f9fa;
+            padding: 0.8rem;
+            border-radius: 8px;
+            margin-bottom: 0.5rem;
+            border-left: 4px solid #ff4d6d;
+        }
+        
+        .footer {
+            background: #222;
+            color: white;
+            text-align: center;
+            padding: 1.5rem;
+            margin-top: 2rem;
+        }
+        
+        @media (max-width: 768px) {
+            .navbar {
+                flex-direction: column;
+                gap: 0.5rem;
+                padding: 1rem;
+            }
+            
+            .nav-links {
+                display: flex;
+                flex-wrap: wrap;
+                justify-content: center;
+                gap: 0.5rem;
+            }
+            
+            .nav-links a {
+                margin-left: 0;
+                font-size: 0.9rem;
+            }
+            
+            .container {
+                padding: 1rem;
+                margin-top: 120px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo" onclick="location.href='/'">SafeHer</div>
+        <div class="nav-links">
+            <a href="/">Home</a>
+            <a href="/predict">Safety Check</a>
+            <a href="/help">Emergency</a>
+            <a href="/feedback">Feedback</a>
+            <a href="/profile">Profile</a>
+            <a href="/logout">Logout</a>
+        </div>
+    </nav>
+    
+    <div class="container">
+        <div class="welcome-card">
+            <h1>Welcome back, {{ user.full_name }}! 👋</h1>
+            <p>Your safety is our priority. Stay vigilant, stay safe.</p>
+            <div id="locationDisplay" class="location-badge">
+                📍 Getting your location...
+            </div>
+        </div>
+        
+        <div class="dashboard-grid">
+            <div class="card">
+                <h3>📍 Live Location Map</h3>
+                <div class="map-container">
+                    <div id="map"></div>
+                </div>
+                <div id="riskDisplay" style="margin-top: 0.5rem; font-size: 0.9rem; color: #666;"></div>
+                <button class="btn btn-primary" onclick="refreshLocation()">🔄 Refresh Location</button>
+                <button class="btn btn-warning" onclick="shareLocation()">📍 Share Location</button>
+            </div>
+            
+            <div class="card">
+                <h3>👨‍👩‍👧 Your Guardians</h3>
+                {% if guardians %}
+                    {% for relation in guardians %}
+                    <div class="guardian-item">
+                        <div>
+                            <div class="guardian-name">{{ relation.guardian.full_name }}</div>
+                            <div style="font-size: 0.8rem; color: #666;">@{{ relation.guardian.username }} | {{ relation.relationship }}</div>
+                        </div>
+                        <form action="/remove_guardian/{{ relation.guardian.id }}" method="POST" style="margin: 0;">
+                            <button type="submit" class="remove-btn" onclick="return confirm('Remove this guardian?')">Remove</button>
+                        </form>
+                    </div>
+                    {% endfor %}
+                {% else %}
+                    <p style="color: #666; margin-bottom: 1rem;">No guardians added yet. Add one below!</p>
+                {% endif %}
+                
+                <form action="/add_guardian" method="POST" style="margin-top: 1rem;">
+                    <input type="text" name="guardian_username" placeholder="Enter Guardian Username" required 
+                           style="width: 100%; padding: 0.8rem; margin-bottom: 0.5rem; border: 2px solid #e0e0e0; border-radius: 8px;">
+                    <input type="text" name="relationship" placeholder="Relationship (e.g., Mother, Father, Sister)" 
+                           style="width: 100%; padding: 0.8rem; margin-bottom: 0.5rem; border: 2px solid #e0e0e0; border-radius: 8px;">
+                    <button type="submit" class="btn btn-primary" style="width: 100%;">➕ Add Guardian</button>
+                </form>
+                
+                <div style="margin-top: 1rem; padding-top: 1rem; border-top: 1px solid #eee;">
+                    <p style="font-size: 0.8rem; color: #666;">
+                        <strong>💡 Tip:</strong> Ask your guardian to register as a guardian first, then add their username here.
+                    </p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="dashboard-grid">
+            <div class="card">
+                <h3>👮 Nearby Emergency Services</h3>
+                <div id="nearbyPolice">
+                    <p style="color: #666;">📍 Getting nearby police stations...</p>
+                </div>
+                <div id="nearbyNGOs" style="margin-top: 1rem;">
+                    <p style="color: #666;">🆘 Getting nearby NGOs...</p>
+                </div>
+            </div>
+            
+            <div class="card">
+                <h3>🚨 Recent Alerts</h3>
+                {% if recent_alerts %}
+                    {% for alert in recent_alerts %}
+                    <div class="alert-item {% if alert.risk_level > 70 %}danger{% endif %}">
+                        <strong>⚠️ {{ alert.alert_type|upper }}</strong> - Risk: {{ alert.risk_level }}%
+                        <br>
+                        <small>{{ alert.created_at.strftime('%Y-%m-%d %H:%M') }}</small>
+                        {% if alert.status == 'active' %}
+                            <span style="color: red; margin-left: 10px;">● Active</span>
+                        {% endif %}
+                    </div>
+                    {% endfor %}
+                {% else %}
+                    <p>No recent alerts</p>
+                {% endif %}
+            </div>
+        </div>
+        
+        <div class="card">
+            <h3>🚨 Safety Tips</h3>
+            <ul style="margin-left: 1.5rem; line-height: 1.8;">
+                <li>🎤 <strong>Voice Detection:</strong> Say "help", "bachao", "madad" to trigger alert (10 sec countdown)</li>
+                <li>📱 <strong>Shake Detection:</strong> Shake phone 3 times rapidly to trigger alert</li>
+                <li>🚨 <strong>Panic Button:</strong> Press red button for emergency</li>
+                <li>📍 <strong>Live Location:</strong> Your location is tracked for safety</li>
+                <li>👨‍👩‍👧 <strong>Guardians:</strong> Add guardians to receive alerts</li>
+                <li>👮 <strong>Police & NGOs:</strong> Automatically notified in emergencies</li>
+            </ul>
+        </div>
+        
+        <div class="card">
+            <h3>🌍 Multi-Language Voice Support</h3>
+            <div style="display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 0.5rem;">
+                <span style="background: #f0f0f0; padding: 0.3rem 0.8rem; border-radius: 20px;">🇬🇧 Help</span>
+                <span style="background: #f0f0f0; padding: 0.3rem 0.8rem; border-radius: 20px;">🇮🇳 Bachao</span>
+                <span style="background: #f0f0f0; padding: 0.3rem 0.8rem; border-radius: 20px;">🇮🇳 Madad</span>
+                <span style="background: #f0f0f0; padding: 0.3rem 0.8rem; border-radius: 20px;">🇮🇳 Danger</span>
+                <span style="background: #f0f0f0; padding: 0.3rem 0.8rem; border-radius: 20px;">🇮🇳 Emergency</span>
+                <span style="background: #f0f0f0; padding: 0.3rem 0.8rem; border-radius: 20px;">🇮🇳 Police</span>
+                <span style="background: #f0f0f0; padding: 0.3rem 0.8rem; border-radius: 20px;">🇮🇳 Save me</span>
+                <span style="background: #f0f0f0; padding: 0.3rem 0.8rem; border-radius: 20px;">🇮🇳 Attack</span>
+            </div>
+            <p style="font-size: 12px; color: #666; margin-top: 10px;">🎤 Say these words in English or Hindi typing to trigger emergency!</p>
+        </div>
+        
+        <!-- Voice Status Card -->
+        <!-- <div id="voiceStatusCard" class="voice-status-card">
+            <div class="voice-dot"></div>
+            <span id="voiceStatusText">Voice detection off</span>
+            <span id="languageIndicator" style="font-size: 10px; background: rgba(255,255,255,0.2); padding: 2px 6px; border-radius: 10px; display: none;">🌍 Multi-Lang</span>
+        </div>
+    </div> -->
+    
+    <!-- Buttons -->
+    <!-- <button id="emergencyBtn" class="emergency-fab" onclick="triggerManualEmergency()">🚨</button>
+    <button id="microphoneBtn" class="microphone-btn" onclick="requestMicrophonePermission()">🎤</button>
+    
+    <footer class="footer">
+        <p>© 2024 SafeHer - Women Safety System | Your safety companion</p>
+    </footer>
+    
+    <script> -->
+        // ==================== VARIABLES ====================
+        <!-- let map;
+        let currentMarker;
+        let currentPosition;
+        let recognition = null;
+        let isListening = false;
+        let emergencyTimer = null;
+        let countdownInterval = null;
+        let isEmergencyActive = false;
+        let permissionRequested = false; -->
+        
+        // ==================== MAP FUNCTIONS ====================
+        <!-- function initMap(lat, lon) {
+            map = L.map('map').setView([lat, lon], 15);
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '© OpenStreetMap contributors'
+            }).addTo(map);
+            currentMarker = L.marker([lat, lon]).addTo(map);
+            currentMarker.bindPopup('Your current location').openPopup();
+        }
+        
+        function updateLocationWithServices(position) {
+            const lat = position.coords.latitude;
+            const lon = position.coords.longitude;
+            currentPosition = {lat, lon};
+            
+            document.getElementById('locationDisplay').innerHTML = 
+                '📍 Your Location: ' + lat.toFixed(6) + ', ' + lon.toFixed(6);
+            
+            getNearbyPolice(lat, lon);
+            getNearbyNGOs();
+            
+            if (map) {
+                map.setView([lat, lon], 15);
+                if (currentMarker) {
+                    currentMarker.setLatLng([lat, lon]);
+                } else {
+                    currentMarker = L.marker([lat, lon]).addTo(map);
+                }
+                currentMarker.bindPopup('Your current location').openPopup();
+            } else {
+                initMap(lat, lon);
+            }
+            
+            fetch('/save_location', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({latitude: lat, longitude: lon})
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.risk) {
+                    let riskDisplay = document.getElementById('riskDisplay');
+                    if (data.risk > 70) {
+                        riskDisplay.innerHTML = '⚠️ High Risk Area! Risk Level: ' + data.risk + '%';
+                        riskDisplay.style.color = '#dc3545';
+                        riskDisplay.style.fontWeight = 'bold';
+                    } else if (data.risk > 40) {
+                        riskDisplay.innerHTML = '⚠️ Moderate Risk Area. Risk Level: ' + data.risk + '%';
+                        riskDisplay.style.color = '#ff9800';
+                    } else {
+                        riskDisplay.innerHTML = '✅ Safe Area. Risk Level: ' + data.risk + '%';
+                        riskDisplay.style.color = '#4caf50';
+                    }
+                }
+            });
+        }
+        
+        function getNearbyPolice(lat, lon) {
+            fetch(`/nearby_police?lat=${lat}&lon=${lon}`)
+                .then(response => response.json())
+                .then(data => {
+                    let html = '';
+                    if (data.length > 0) {
+                        html = '<div style="margin-top: 0.5rem;">';
+                        data.forEach(police => {
+                            html += `
+                                <div class="service-card">
+                                    <strong>👮 ${police.name}</strong><br>
+                                    📍 ${police.distance} km away<br>
+                                    📞 ${police.phone}<br>
+                                    <a href="https://maps.google.com/?q=${police.lat},${police.lon}" target="_blank" style="color: #ff4d6d;">View on Map →</a>
+                                </div>
+                            `;
+                        });
+                        html += '</div>';
+                    } else {
+                        html = '<p style="color: #666;">No police stations found within 10km</p>';
+                    }
+                    document.getElementById('nearbyPolice').innerHTML = html;
+                });
+        }
+        
+        function getNearbyNGOs() {
+            fetch('/nearby_ngos')
+                .then(response => response.json())
+                .then(data => {
+                    let html = '<div style="margin-top: 0.5rem;">';
+                    data.forEach(ngo => {
+                        html += `
+                            <div class="service-card">
+                                <strong>🆘 ${ngo.name}</strong><br>
+                                📞 ${ngo.phone}<br>
+                                📧 ${ngo.email}
+                            </div>
+                        `;
+                    });
+                    html += '</div>';
+                    document.getElementById('nearbyNGOs').innerHTML = html;
+                });
+        }
+        
+        function refreshLocation() {
+            if(navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(updateLocationWithServices, handleLocationError, {
+                    enableHighAccuracy: true,
+                    timeout: 10000
+                });
+            }
+        }
+        
+        function handleLocationError(error) {
+            let message = '';
+            switch(error.code) {
+                case error.PERMISSION_DENIED:
+                    message = 'Location access denied. Please enable GPS.';
+                    break;
+                case error.POSITION_UNAVAILABLE:
+                    message = 'Location unavailable.';
+                    break;
+                default:
+                    message = 'Unable to get location.';
+            }
+            document.getElementById('locationDisplay').innerHTML = '📍 ' + message;
+            initMap(19.0760, 72.8777);
+        }
+        
+        function shareLocation() {
+            if(currentPosition) {
+                alert('📍 Your location:\nLat: ' + currentPosition.lat.toFixed(6) + '\nLon: ' + currentPosition.lon.toFixed(6));
+            } else {
+                alert('📍 Getting location...');
+                refreshLocation();
+            }
+        } -->
+        
+        // ==================== EMERGENCY FUNCTIONS ====================
+        <!-- function showEmergencyModal(triggerType, triggerWord = null) {
+            if (isEmergencyActive) return;
+            isEmergencyActive = true;
+            
+            const modalHtml = `
+                <div id="emergencyModal" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 10000; display: flex; justify-content: center; align-items: center;">
+                    <div style="background: white; padding: 2rem; border-radius: 20px; max-width: 400px; text-align: center;">
+                        <div style="font-size: 4rem; margin-bottom: 1rem;">🚨</div>
+                        <h2 style="color: #dc3545; margin-bottom: 1rem;">EMERGENCY ALERT!</h2>
+                        <p>We detected: "${triggerWord || 'Emergency'}"</p>
+                        <div id="countdownTimer" style="font-size: 3rem; font-weight: bold; color: #ff4d6d; margin: 1rem 0;">10</div>
+                        <p>If you're safe, click CANCEL. Otherwise, alert will be sent automatically.</p>
+                        <div style="display: flex; gap: 1rem; margin-top: 1rem;">
+                            <button id="cancelEmergency" style="flex: 1; padding: 0.8rem; background: #28a745; color: white; border: none; border-radius: 10px; cursor: pointer;">✅ I'M SAFE</button>
+                            <button id="confirmEmergency" style="flex: 1; padding: 0.8rem; background: #dc3545; color: white; border: none; border-radius: 10px; cursor: pointer;">🚨 SEND NOW</button>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            document.body.insertAdjacentHTML('beforeend', modalHtml);
+            
+            let countdown = 10;
+            const countdownElement = document.getElementById('countdownTimer');
+            
+            countdownInterval = setInterval(() => {
+                countdown--;
+                if (countdownElement) countdownElement.textContent = countdown;
+                if (countdown <= 0) {
+                    clearInterval(countdownInterval);
+                    clearTimeout(emergencyTimer);
+                    document.getElementById('emergencyModal')?.remove();
+                    isEmergencyActive = false;
+                    sendEmergencyAlert(triggerType, triggerWord);
+                }
+            }, 1000);
+            
+            document.getElementById('cancelEmergency').onclick = () => {
+                clearInterval(countdownInterval);
+                clearTimeout(emergencyTimer);
+                document.getElementById('emergencyModal').remove();
+                isEmergencyActive = false;
+                showToast('Emergency cancelled. Stay safe!', 'success');
+            };
+            
+            document.getElementById('confirmEmergency').onclick = () => {
+                clearInterval(countdownInterval);
+                clearTimeout(emergencyTimer);
+                document.getElementById('emergencyModal').remove();
+                isEmergencyActive = false;
+                sendEmergencyAlert(triggerType, triggerWord);
+            };
+            
+            emergencyTimer = setTimeout(() => {
+                if (isEmergencyActive) {
+                    clearInterval(countdownInterval);
+                    document.getElementById('emergencyModal')?.remove();
+                    isEmergencyActive = false;
+                    sendEmergencyAlert(triggerType, triggerWord);
+                }
+            }, 10000);
+        }
+        
+        async function sendEmergencyAlert(triggerType, triggerWord = null) {
+            console.log('Sending emergency alert...');
+            showToast('🚨 Sending emergency alert...', 'danger');
+            
+            let location = currentPosition;
+            if (!location) {
+                location = await new Promise((resolve) => {
+                    if (navigator.geolocation) {
+                        navigator.geolocation.getCurrentPosition(
+                            (pos) => resolve({lat: pos.coords.latitude, lon: pos.coords.longitude}),
+                            () => resolve(null)
+                        );
+                    } else {
+                        resolve(null);
+                    }
+                });
+            }
+            
+            let endpoint = '';
+            let body = {};
+            
+            if (triggerType === 'voice') {
+                endpoint = '/voice_detect';
+                body = { text: triggerWord || 'help', latitude: location?.lat, longitude: location?.lon };
+            } else if (triggerType === 'shake') {
+                endpoint = '/sos_pattern';
+                body = { pattern: 'shake', latitude: location?.lat, longitude: location?.lon };
+            } else {
+                endpoint = '/panic';
+                body = { latitude: location?.lat, longitude: location?.lon };
+            }
+            
+            try {
+                const response = await fetch(endpoint, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(body)
+                });
+                
+                const data = await response.json();
+                
+                if (data.alert || data.success) {
+                    let message = '🚨 EMERGENCY ALERT SENT!\n\n';
+                    message += '='.repeat(40) + '\n\n';
+                    
+                    if (data.notification) {
+                        if (data.notification.guardian_names && data.notification.guardian_names.length > 0) {
+                            message += `👨‍👩‍👧 GUARDIANS NOTIFIED (${data.notification.guardian_names.length}):\n`;
+                            data.notification.guardian_names.forEach(name => {
+                                message += `   ✓ ${name}\n`;
+                            });
+                            message += '\n';
+                        }
+                        
+                        if (data.notification.police_names && data.notification.police_names.length > 0) {
+                            message += `👮 POLICE STATIONS NOTIFIED (${data.notification.police_names.length}):\n`;
+                            data.notification.police_names.forEach(name => {
+                                message += `   ✓ ${name}\n`;
+                            });
+                            message += '\n';
+                        }
+                            
+} -->
+                        
+                        <!-- if (data.notification.ngo_names && data.notification.ngo_names.length > 0) {
+                            message += `🆘 NGOS NOTIFIED (${data.notification.ngo_names.length}):\n`;
+                            data.notification.ngo_names.forEach(name => {
+                                message += `   ✓ ${name}\n`;
+                            });
+                            message += '\n';
+                        }
+                    }
+                    
+                    message += '='.repeat(40) + '\n\n';
+                    if (location) {
+                        message += `📍 Location: ${location.lat.toFixed(6)}, ${location.lon.toFixed(6)}\n`;
+                    }
+                    message += `⏰ Time: ${new Date().toLocaleString()}\n\n🚨 Help is on the way!`;
+                    alert(message);
+                    showToast('✅ Emergency alert sent to Guardians, Police & NGOs!', 'success');
+                } else {
+                    alert('⚠️ Alert triggered but no notification sent.');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('⚠️ Error sending alert. Please check your connection.');
+            }
+        }
+        
+        function triggerManualEmergency() {
+            showEmergencyModal('manual', 'Panic Button');
+        }
+        
+        // ==================== MULTI-LANGUAGE VOICE SUPPORT (FIXED) ====================
+        // Distress words in English and Hindi (English typing)
+        const distressWordsList = [
+            'help', 'bachao', 'madad', 'danger', 'emergency', 'police', 
+            'attack', 'save me', 'rescue', 'kidnap', 'stalking', 'follow',
+            'बचाओ', 'मदद', 'खतरा', 'पुलिस', 'सहायता'
+        ];
+        
+        function detectDistressWord(text) {
+            const lowerText = text.toLowerCase();
+            
+            for (let word of distressWordsList) {
+                if (lowerText.includes(word.toLowerCase())) {
+                    let displayWord = word;
+                    // Show Hindi word in display
+                    if (word === 'bachao') displayWord = 'बचाओ (Bachao)';
+                    if (word === 'madad') displayWord = 'मदद (Madad)';
+                    return { detected: true, word: displayWord, original: word };
+                }
+            }
+            return { detected: false };
+        }
+        
+        function requestMicrophonePermission() {
+            if (permissionRequested) {
+                if (recognition && !isListening) {
+                    recognition.start();
+                }
+                return;
+            }
+            
+            navigator.mediaDevices.getUserMedia({ audio: true })
+                .then(function(stream) {
+                    stream.getTracks().forEach(track => track.stop());
+                    initVoiceDetection();
+                    permissionRequested = true;
+                    showToast('🎤 Microphone access granted! Say "help" or "bachao" for emergency.', 'success');
+                })
+                .catch(function(err) {
+                    showToast('❌ Microphone access denied. Voice detection disabled.', 'danger');
+                    console.error('Microphone error:', err);
+                });
+        }
+        
+        function initVoiceDetection() {
+            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+            
+            if (SpeechRecognition) {
+                recognition = new SpeechRecognition();
+                recognition.continuous = true;
+                recognition.interimResults = true;
+                recognition.lang = 'en-IN'; // Indian English for better accent detection
+                
+                recognition.onstart = function() {
+                    isListening = true;
+                    document.getElementById('microphoneBtn').classList.add('active');
+                    const statusCard = document.getElementById('voiceStatusCard');
+                    const statusText = document.getElementById('voiceStatusText');
+                    const langIndicator = document.getElementById('languageIndicator');
+                    statusCard.classList.add('active');
+                    statusText.innerHTML = '🎤 Listening... Say "help" or "bachao"';
+                    if (langIndicator) langIndicator.style.display = 'inline-block';
+                    showToast('🎤 Voice detection active! Say: help, bachao, madad, danger, police', 'success');
+                };
+                
+                recognition.onend = function() {
+                    if (isListening) {
+                        recognition.start();
+                    }
+                };
+                
+                recognition.onresult = function(event) {
+                    let transcript = '';
+                    for (let i = event.resultIndex; i < event.results.length; i++) {
+                        transcript += event.results[i][0].transcript;
+                    }
+                    console.log('🎤 Heard:', transcript);
+                    
+                    const distressResult = detectDistressWord(transcript);
+                    
+                    if (distressResult.detected) {
+                        console.log(`🚨 Distress detected: "${distressResult.word}"`);
+                        showToast(`🎤 Detected: "${distressResult.word}" - Triggering emergency!`, 'warning');
+                        showEmergencyModal('voice', distressResult.word);
+                    }
+                };
+                
+                recognition.start();
+            } else {
+                alert('Voice detection not supported in this browser. Please use Chrome or Edge.');
+            }
+        }
+        
+        function showToast(message, type) {
+            let toast = document.createElement('div');
+            toast.innerHTML = message;
+            const colors = { success: '#28a745', danger: '#dc3545', warning: '#ff9800', info: '#2196f3' };
+            toast.style.cssText = `
+                position: fixed; bottom: 100px; right: 20px; background: ${colors[type] || colors.info};
+                color: white; padding: 12px 20px; border-radius: 8px; z-index: 10001;
+                font-size: 14px; font-weight: 500; box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+                animation: slideIn 0.3s ease; max-width: 300px;
+            `;
+            document.body.appendChild(toast);
+            setTimeout(() => toast.remove(), 4000);
+        }
+        
+        // ==================== SHAKE DETECTION ====================
+        let lastShake = 0;
+        let shakeCount = 0;
+        
+        function initShakeDetection() {
+            if (window.DeviceMotionEvent) {
+                window.addEventListener('devicemotion', function(e) {
+                    let acc = e.accelerationIncludingGravity;
+                    let x = Math.abs(acc.x || 0);
+                    let y = Math.abs(acc.y || 0);
+                    let z = Math.abs(acc.z || 0);
+                    let magnitude = x + y + z;
+                    
+                    if (magnitude > 35) {
+                        let now = Date.now();
+                        if (now - lastShake < 500) {
+                            shakeCount++;
+                            if (shakeCount >= 3) {
+                                showEmergencyModal('shake', 'Phone Shaken');
+                                shakeCount = 0;
+                            }
+                        } else {
+                            shakeCount = 1;
+                        }
+                        lastShake = now;
+                    }
+                });
+            }
+        } -->
+        
+        // ==================== INITIALIZATION ====================
+        <!-- refreshLocation();
+        initShakeDetection();
+        
+        setTimeout(() => {
+            if(confirm('🎤 Enable voice detection for emergency alerts?\n\nYou can say "help" or "bachao" to trigger emergency.\n\nClick OK to allow microphone access.')) {
+                requestMicrophonePermission();
+            }
+        }, 2000);
+        
+        setInterval(refreshLocation, 30000);
+        
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes slideIn {
+                from { transform: translateX(100%); opacity: 0; }
+                to { transform: translateX(0); opacity: 1; }
+            }
+        `;
+        document.head.appendChild(style);
+    </script>
+</body>
+</html> --> 
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>User Dashboard - SafeHer</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: #f5f7fa;
+        }
+        
+        .navbar {
+            background: linear-gradient(135deg, #ff4d6d, #e63e5c);
+            padding: 1rem 5%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: white;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            cursor: pointer;
+        }
+        
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            margin-left: 1.5rem;
+            transition: all 0.3s;
+        }
+        
+        .nav-links a:hover {
+            color: #ffd966;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 80px auto 0;
+            padding: 2rem;
+        }
+        
+        .welcome-card {
+            background: linear-gradient(135deg, #ff4d6d, #e63e5c);
+            color: white;
+            padding: 2rem;
+            border-radius: 20px;
+            margin-bottom: 2rem;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .welcome-card::before {
+            content: "🛡️";
+            position: absolute;
+            font-size: 150px;
+            opacity: 0.1;
+            right: -20px;
+            bottom: -40px;
+        }
+        
+        .location-badge {
+            background: rgba(255,255,255,0.2);
+            padding: 0.5rem 1rem;
+            border-radius: 50px;
+            display: inline-block;
+            margin-top: 1rem;
+        }
+        
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.05);
+            transition: all 0.3s;
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+        
+        .card h3 {
+            color: #ff4d6d;
+            margin-bottom: 1rem;
+            font-size: 1.3rem;
+        }
+        
+        .map-container {
+            height: 300px;
+            border-radius: 10px;
+            overflow: hidden;
+            margin-bottom: 1rem;
+        }
+        
+        #map {
+            height: 100%;
+            width: 100%;
+        }
+        
+        .btn {
+            padding: 0.8rem 1.5rem;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s;
+            margin-right: 0.5rem;
+            margin-top: 0.5rem;
+        }
+        
+        .btn-primary {
+            background: #ff4d6d;
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background: #e63e5c;
+            transform: translateY(-2px);
+        }
+        
+        .btn-danger {
+            background: #dc3545;
+            color: white;
+        }
+        
+        .btn-danger:hover {
+            background: #c82333;
+            transform: translateY(-2px);
+        }
+        
+        .btn-warning {
+            background: #ff9800;
+            color: white;
+        }
+        
+        .btn-warning:hover {
+            background: #f57c00;
+            transform: translateY(-2px);
+        }
+        
+        .btn-success {
+            background: #28a745;
+            color: white;
+        }
+        
+        .emergency-fab {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            width: 70px;
+            height: 70px;
+            background: #dc3545;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            font-size: 2rem;
+            cursor: pointer;
+            box-shadow: 0 5px 20px rgba(220,53,69,0.4);
+            transition: all 0.3s;
+            z-index: 1000;
+            animation: pulse 2s infinite;
+        }
+        
+        .emergency-fab:hover {
+            transform: scale(1.1);
+        }
+        
+        .microphone-btn {
+            position: fixed;
+            bottom: 100px;
+            right: 90px;
+            width: 55px;
+            height: 55px;
+            border-radius: 50%;
+            background: #6c757d;
+            color: white;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            z-index: 1000;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .microphone-btn.active {
+            background: #28a745;
+            animation: pulseMic 1.5s infinite;
+        }
+        
+        @keyframes pulseMic {
+            0% { box-shadow: 0 0 0 0 rgba(40, 167, 69, 0.7); }
+            70% { box-shadow: 0 0 0 15px rgba(40, 167, 69, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(40, 167, 69, 0); }
+        }
+        
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(220,53,69,0.7); }
+            70% { box-shadow: 0 0 0 15px rgba(220,53,69,0); }
+            100% { box-shadow: 0 0 0 0 rgba(220,53,69,0); }
+        }
+        
+        .voice-status-card {
+            position: fixed;
+            bottom: 170px;
+            right: 90px;
+            background: rgba(0,0,0,0.85);
+            color: white;
+            padding: 8px 15px;
+            border-radius: 25px;
+            font-size: 12px;
+            z-index: 1000;
+            display: none;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .voice-status-card.active {
+            display: flex;
+        }
+        
+        .voice-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: #28a745;
+            animation: blink 1s infinite;
+        }
+        
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
+        }
+        
+        .guardian-item {
+            background: #f8f9fa;
+            padding: 0.8rem;
+            border-radius: 10px;
+            margin-bottom: 0.8rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .guardian-name {
+            font-weight: 600;
+            color: #ff4d6d;
+        }
+        
+        .remove-btn {
+            background: #dc3545;
+            color: white;
+            border: none;
+            padding: 0.3rem 0.8rem;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.8rem;
+        }
+        
+        .alert-item {
+            background: #fff3cd;
+            padding: 0.8rem;
+            border-radius: 8px;
+            margin-bottom: 0.8rem;
+            border-left: 4px solid #ff9800;
+        }
+        
+        .alert-item.danger {
+            background: #f8d7da;
+            border-left-color: #dc3545;
+        }
+        
+        .service-card {
+            background: #f8f9fa;
+            padding: 0.8rem;
+            border-radius: 8px;
+            margin-bottom: 0.5rem;
+            border-left: 4px solid #ff4d6d;
+            transition: all 0.2s;
+        }
+        
+        .service-card:hover {
+            background: #fff3cd;
+            transform: translateX(5px);
+        }
+        
+        .footer {
+            background: #222;
+            color: white;
+            text-align: center;
+            padding: 1.5rem;
+            margin-top: 2rem;
+        }
+        
+        .loading-spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #ff4d6d;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-right: 10px;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        @media (max-width: 768px) {
+            .navbar {
+                flex-direction: column;
+                gap: 0.5rem;
+                padding: 1rem;
+            }
+            
+            .nav-links {
+                display: flex;
+                flex-wrap: wrap;
+                justify-content: center;
+                gap: 0.5rem;
+            }
+            
+            .nav-links a {
+                margin-left: 0;
+                font-size: 0.9rem;
+            }
+            
+            .container {
+                padding: 1rem;
+                margin-top: 120px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo" onclick="location.href='/'">SafeHer</div>
+        <div class="nav-links">
+            <a href="/">Home</a>
+            <a href="/predict">Safety Check</a>
+            <a href="/help">Emergency</a>
+            <a href="/feedback">Feedback</a>
+            <a href="/profile">Profile</a>
+            <a href="/logout">Logout</a>
+        </div>
+    </nav>
+    
+    <div class="container">
+        <div class="welcome-card">
+            <h1>Welcome back, {{ user.full_name }}! 👋</h1>
+            <p>Your safety is our priority. Stay vigilant, stay safe.</p>
+            <div id="locationDisplay" class="location-badge">
+                📍 Getting your location...
+            </div>
+        </div>
+        
+        <div class="dashboard-grid">
+            <div class="card">
+                <h3>📍 Live Location Map</h3>
+                <div class="map-container">
+                    <div id="map"></div>
+                </div>
+                <div id="riskDisplay" style="margin-top: 0.5rem; font-size: 0.9rem; color: #666;"></div>
+                <button class="btn btn-primary" onclick="refreshLocation()">🔄 Refresh Location</button>
+                <button class="btn btn-warning" onclick="shareLocation()">📍 Share Location</button>
+            </div>
+            
+            <div class="card">
+                <h3>👨‍👩‍👧 Your Guardians</h3>
+                {% if guardians %}
+                    {% for relation in guardians %}
+                    <div class="guardian-item">
+                        <div>
+                            <div class="guardian-name">{{ relation.guardian.full_name }}</div>
+                            <div style="font-size: 0.8rem; color: #666;">@{{ relation.guardian.username }} | {{ relation.relationship }}</div>
+                        </div>
+                        <form action="/remove_guardian/{{ relation.guardian.id }}" method="POST" style="margin: 0;">
+                            <button type="submit" class="remove-btn" onclick="return confirm('Remove this guardian?')">Remove</button>
+                        </form>
+                    </div>
+                    {% endfor %}
+                {% else %}
+                    <p style="color: #666; margin-bottom: 1rem;">No guardians added yet. Add one below!</p>
+                {% endif %}
+                
+                <form action="/add_guardian" method="POST" style="margin-top: 1rem;">
+                    <input type="text" name="guardian_username" placeholder="Enter Guardian Username" required 
+                           style="width: 100%; padding: 0.8rem; margin-bottom: 0.5rem; border: 2px solid #e0e0e0; border-radius: 8px;">
+                    <input type="text" name="relationship" placeholder="Relationship (e.g., Mother, Father, Sister)" 
+                           style="width: 100%; padding: 0.8rem; margin-bottom: 0.5rem; border: 2px solid #e0e0e0; border-radius: 8px;">
+                    <button type="submit" class="btn btn-primary" style="width: 100%;">➕ Add Guardian</button>
+                </form>
+                
+                <div style="margin-top: 1rem; padding-top: 1rem; border-top: 1px solid #eee;">
+                    <p style="font-size: 0.8rem; color: #666;">
+                        <strong>💡 Tip:</strong> Ask your guardian to register as a guardian first, then add their username here.
+                    </p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="dashboard-grid">
+            <div class="card">
+                <h3>👮 Nearby Police Stations</h3>
+                <div id="nearbyPolice">
+                    <p style="color: #666;"><span class="loading-spinner"></span> Loading police stations...</p>
+                </div>
+            </div>
+            
+            <div class="card">
+                <h3>🆘 Nearby NGOs</h3>
+                <div id="nearbyNGOs">
+                    <p style="color: #666;"><span class="loading-spinner"></span> Loading NGOs...</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="dashboard-grid">
+            <div class="card">
+                <h3>🚨 Recent Alerts</h3>
+                {% if recent_alerts %}
+                    {% for alert in recent_alerts %}
+                    <div class="alert-item {% if alert.risk_level > 70 %}danger{% endif %}">
+                        <strong>⚠️ {{ alert.alert_type|upper }}</strong> - Risk: {{ alert.risk_level }}%
+                        <br>
+                        <small>{{ alert.created_at.strftime('%Y-%m-%d %H:%M') }}</small>
+                        {% if alert.status == 'active' %}
+                            <span style="color: red; margin-left: 10px;">● Active</span>
+                        {% endif %}
+                    </div>
+                    {% endfor %}
+                {% else %}
+                    <p>No recent alerts</p>
+                {% endif %}
+            </div>
+            
+            <div class="card">
+                <h3>🚨 Safety Tips</h3>
+                <ul style="margin-left: 1.5rem; line-height: 1.8;">
+                    <li>🎤 <strong>Voice Detection:</strong> Say "help", "bachao", "madad" to trigger alert (10 sec countdown)</li>
+                    <li>📱 <strong>Shake Detection:</strong> Shake phone 3 times rapidly to trigger alert</li>
+                    <li>🚨 <strong>Panic Button:</strong> Press red button for emergency</li>
+                    <li>📍 <strong>Live Location:</strong> Your location is tracked for safety</li>
+                    <li>👨‍👩‍👧 <strong>Guardians:</strong> Add guardians to receive alerts</li>
+                    <li>👮 <strong>Police & NGOs:</strong> Automatically notified in emergencies</li>
+                </ul>
+            </div>
+        </div>
+        
+        <div class="card">
+            <h3>🌍 Multi-Language Voice Support</h3>
+            <div style="display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 0.5rem;">
+                <span style="background: #f0f0f0; padding: 0.3rem 0.8rem; border-radius: 20px;">🇬🇧 Help</span>
+                <span style="background: #f0f0f0; padding: 0.3rem 0.8rem; border-radius: 20px;">🇮🇳 Bachao</span>
+                <span style="background: #f0f0f0; padding: 0.3rem 0.8rem; border-radius: 20px;">🇮🇳 Madad</span>
+                <span style="background: #f0f0f0; padding: 0.3rem 0.8rem; border-radius: 20px;">🇮🇳 Danger</span>
+                <span style="background: #f0f0f0; padding: 0.3rem 0.8rem; border-radius: 20px;">🇮🇳 Emergency</span>
+                <span style="background: #f0f0f0; padding: 0.3rem 0.8rem; border-radius: 20px;">🇮🇳 Police</span>
+                <span style="background: #f0f0f0; padding: 0.3rem 0.8rem; border-radius: 20px;">🇮🇳 Save me</span>
+                <span style="background: #f0f0f0; padding: 0.3rem 0.8rem; border-radius: 20px;">🇮🇳 Attack</span>
+            </div>
+            <p style="font-size: 12px; color: #666; margin-top: 10px;">🎤 Say these words to trigger emergency alert automatically!</p>
+        </div>
+        
+        <!-- Voice Status Card -->
+        <div id="voiceStatusCard" class="voice-status-card">
+            <div class="voice-dot"></div>
+            <span id="voiceStatusText">Voice detection off</span>
+            <span id="languageIndicator" style="font-size: 10px; background: rgba(255,255,255,0.2); padding: 2px 6px; border-radius: 10px; display: none;">🌍 Multi-Lang</span>
+        </div>
+    </div>
+    
+    <!-- Buttons -->
+    <button id="emergencyBtn" class="emergency-fab" onclick="triggerManualEmergency()">🚨</button>
+    <button id="microphoneBtn" class="microphone-btn" onclick="requestMicrophonePermission()">🎤</button>
+    
+    <footer class="footer">
+        <p>© 2024 SafeHer - Women Safety System | Your safety companion</p>
+    </footer>
+    
+    <script>
+        // ==================== VARIABLES ====================
+        let map = null;
+        let currentMarker = null;
+        let currentPosition = null;
+        let recognition = null;
+        let isListening = false;
+        let emergencyTimer = null;
+        let countdownInterval = null;
+        let isEmergencyActive = false;
+        let permissionRequested = false;
+        
+        // ==================== MAP FUNCTIONS ====================
+        function initMap(lat, lon) {
+            console.log("Initializing map at:", lat, lon);
+            if (map) {
+                map.setView([lat, lon], 15);
+                if (currentMarker) {
+                    currentMarker.setLatLng([lat, lon]);
+                } else {
+                    currentMarker = L.marker([lat, lon]).addTo(map);
+                    currentMarker.bindPopup('Your current location').openPopup();
+                }
+            } else {
+                map = L.map('map').setView([lat, lon], 15);
+                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                    attribution: '© OpenStreetMap contributors'
+                }).addTo(map);
+                currentMarker = L.marker([lat, lon]).addTo(map);
+                currentMarker.bindPopup('Your current location').openPopup();
+            }
+            return true;
+        }
+        
+        function updateLocationWithServices(position) {
+            const lat = position.coords.latitude;
+            const lon = position.coords.longitude;
+            currentPosition = {lat, lon};
+            
+            document.getElementById('locationDisplay').innerHTML = 
+                '📍 Your Location: ' + lat.toFixed(6) + ', ' + lon.toFixed(6);
+            
+            // Initialize or update map
+            if (!map) {
+                initMap(lat, lon);
+            } else {
+                map.setView([lat, lon], 15);
+                if (currentMarker) {
+                    currentMarker.setLatLng([lat, lon]);
+                } else {
+                    currentMarker = L.marker([lat, lon]).addTo(map);
+                }
+                currentMarker.bindPopup('Your current location').openPopup();
+            }
+            
+            // Get nearby services
+            getNearbyPolice(lat, lon);
+            getNearbyNGOs();
+            
+            // Save location to server
+            fetch('/save_location', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({latitude: lat, longitude: lon})
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.risk) {
+                    let riskDisplay = document.getElementById('riskDisplay');
+                    if (data.risk > 70) {
+                        riskDisplay.innerHTML = '⚠️ High Risk Area! Risk Level: ' + data.risk + '%';
+                        riskDisplay.style.color = '#dc3545';
+                        riskDisplay.style.fontWeight = 'bold';
+                    } else if (data.risk > 40) {
+                        riskDisplay.innerHTML = '⚠️ Moderate Risk Area. Risk Level: ' + data.risk + '%';
+                        riskDisplay.style.color = '#ff9800';
+                    } else {
+                        riskDisplay.innerHTML = '✅ Safe Area. Risk Level: ' + data.risk + '%';
+                        riskDisplay.style.color = '#4caf50';
+                    }
+                }
+            })
+            .catch(error => console.error('Error saving location:', error));
+        }
+        
+        function getNearbyPolice(lat, lon) {
+            console.log("Fetching police stations for:", lat, lon);
+            
+            // Show loading
+            document.getElementById('nearbyPolice').innerHTML = '<p style="color: #666;"><span class="loading-spinner"></span> Loading police stations...</p>';
+            
+            fetch(`/nearby_police?lat=${lat}&lon=${lon}`)
+                .then(response => {
+                    console.log("Police API response status:", response.status);
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    console.log("Police stations received:", data);
+                    console.log("Number of police stations:", data ? data.length : 0);
+                    
+                    let html = '';
+                    if (data && Array.isArray(data) && data.length > 0) {
+                        data.forEach((police, index) => {
+                            console.log(`Police ${index + 1}:`, police);
+                            html += `
+                                <div class="service-card">
+                                    <strong>👮 ${police.name || 'Police Station'}</strong><br>
+                                    📍 Distance: ${police.distance ? police.distance + ' km' : 'N/A'}<br>
+                                    📞 Phone: ${police.phone || '100'}<br>
+                                    ${police.address ? `🏢 Address: ${police.address}<br>` : ''}
+                                    <a href="https://maps.google.com/?q=${police.lat},${police.lon}" target="_blank" style="color: #ff4d6d; text-decoration: none;">📍 View on Map →</a>
+                                </div>
+                            `;
+                        });
+                    } else {
+                        html = `
+                            <div style="text-align: center; padding: 20px;">
+                                <p style="color: #666;">⚠️ No police stations found within 10km</p>
+                                <p style="font-size: 12px; color: #999; margin-top: 10px;">Emergency Number: 100</p>
+                            </div>
+                        `;
+                    }
+                    document.getElementById('nearbyPolice').innerHTML = html;
+                })
+                .catch(error => {
+                    console.error('Error fetching police:', error);
+                    document.getElementById('nearbyPolice').innerHTML = `
+                        <div style="text-align: center; padding: 20px;">
+                            <p style="color: #dc3545;">❌ Error loading police stations</p>
+                            <p style="font-size: 12px; color: #666;">Please check your connection</p>
+                            <button onclick="refreshLocation()" style="margin-top: 10px; padding: 5px 10px; background: #ff4d6d; color: white; border: none; border-radius: 5px;">Retry ↻</button>
+                        </div>
+                    `;
+                });
+        }
+        
+        function getNearbyNGOs() {
+            console.log("Fetching NGOs");
+            
+            // Show loading
+            document.getElementById('nearbyNGOs').innerHTML = '<p style="color: #666;"><span class="loading-spinner"></span> Loading NGOs...</p>';
+            
+            fetch('/nearby_ngos')
+                .then(response => {
+                    console.log("NGO API response status:", response.status);
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    console.log("NGOs received:", data);
+                    console.log("Number of NGOs:", data ? data.length : 0);
+                    
+                    let html = '';
+                    if (data && Array.isArray(data) && data.length > 0) {
+                        data.forEach((ngo, index) => {
+                            console.log(`NGO ${index + 1}:`, ngo);
+                            html += `
+                                <div class="service-card">
+                                    <strong>🆘 ${ngo.name || 'NGO'}</strong><br>
+                                    📞 Helpline: ${ngo.phone || 'N/A'}<br>
+                                    📧 Email: ${ngo.email || 'N/A'}
+                                </div>
+                            `;
+                        });
+                    } else {
+                        html = `
+                            <div style="text-align: center; padding: 20px;">
+                                <p style="color: #666;">⚠️ No NGOs found</p>
+                                <p style="font-size: 12px; color: #999; margin-top: 10px;">Women Helpline: 1091</p>
+                            </div>
+                        `;
+                    }
+                    document.getElementById('nearbyNGOs').innerHTML = html;
+                })
+                .catch(error => {
+                    console.error('Error fetching NGOs:', error);
+                    document.getElementById('nearbyNGOs').innerHTML = `
+                        <div style="text-align: center; padding: 20px;">
+                            <p style="color: #dc3545;">❌ Error loading NGOs</p>
+                            <p style="font-size: 12px; color: #666;">Please check your connection</p>
+                            <button onclick="refreshLocation()" style="margin-top: 10px; padding: 5px 10px; background: #ff4d6d; color: white; border: none; border-radius: 5px;">Retry ↻</button>
+                        </div>
+                    `;
+                });
+        }
+        
+        function refreshLocation() {
+            if(navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(updateLocationWithServices, handleLocationError, {
+                    enableHighAccuracy: true,
+                    timeout: 10000,
+                    maximumAge: 0
+                });
+            } else {
+                handleLocationError({code: 0, message: 'Geolocation not supported'});
+            }
+        }
+        
+        function handleLocationError(error) {
+            console.error('Location error:', error);
+            let message = '';
+            switch(error.code) {
+                case 1:
+                    message = 'Location access denied. Please enable GPS.';
+                    break;
+                case 2:
+                    message = 'Location unavailable.';
+                    break;
+                default:
+                    message = 'Unable to get location. Using default location.';
+            }
+            document.getElementById('locationDisplay').innerHTML = '📍 ' + message;
+            // Default to Mumbai
+            initMap(19.0760, 72.8777);
+            currentPosition = {lat: 19.0760, lon: 72.8777};
+            getNearbyPolice(19.0760, 72.8777);
+            getNearbyNGOs();
+        }
+        
+        function shareLocation() {
+            if(currentPosition) {
+                const url = `https://maps.google.com/?q=${currentPosition.lat},${currentPosition.lon}`;
+                alert('📍 My location:\nLat: ' + currentPosition.lat.toFixed(6) + '\nLon: ' + currentPosition.lon.toFixed(6) + '\n\nOpen in Maps: ' + url);
+            } else {
+                alert('📍 Getting location...');
+                refreshLocation();
+            }
+        }
+        
+        // ==================== EMERGENCY FUNCTIONS ====================
+        function showEmergencyModal(triggerType, triggerWord = null) {
+            if (isEmergencyActive) return;
+            isEmergencyActive = true;
+            
+            // Remove existing modal if any
+            const existingModal = document.getElementById('emergencyModal');
+            if (existingModal) existingModal.remove();
+            
+            const modalHtml = `
+                <div id="emergencyModal" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 10000; display: flex; justify-content: center; align-items: center;">
+                    <div style="background: white; padding: 2rem; border-radius: 20px; max-width: 400px; text-align: center;">
+                        <div style="font-size: 4rem; margin-bottom: 1rem;">🚨</div>
+                        <h2 style="color: #dc3545; margin-bottom: 1rem;">EMERGENCY ALERT!</h2>
+                        <p>Triggered by: <strong>${triggerWord || triggerType || 'Panic Button'}</strong></p>
+                        <div id="countdownTimer" style="font-size: 3rem; font-weight: bold; color: #ff4d6d; margin: 1rem 0;">10</div>
+                        <p>If you're safe, click CANCEL. Otherwise, alert will be sent automatically.</p>
+                        <div style="display: flex; gap: 1rem; margin-top: 1rem;">
+                            <button id="cancelEmergency" style="flex: 1; padding: 0.8rem; background: #28a745; color: white; border: none; border-radius: 10px; cursor: pointer; font-size: 1rem;">✅ I'M SAFE</button>
+                            <button id="confirmEmergency" style="flex: 1; padding: 0.8rem; background: #dc3545; color: white; border: none; border-radius: 10px; cursor: pointer; font-size: 1rem;">🚨 SEND NOW</button>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            document.body.insertAdjacentHTML('beforeend', modalHtml);
+            
+            let countdown = 10;
+            const countdownElement = document.getElementById('countdownTimer');
+            
+            countdownInterval = setInterval(() => {
+                countdown--;
+                if (countdownElement) countdownElement.textContent = countdown;
+                if (countdown <= 0) {
+                    clearInterval(countdownInterval);
+                    clearTimeout(emergencyTimer);
+                    document.getElementById('emergencyModal')?.remove();
+                    isEmergencyActive = false;
+                    sendEmergencyAlert(triggerType, triggerWord);
+                }
+            }, 1000);
+            
+            document.getElementById('cancelEmergency').onclick = () => {
+                clearInterval(countdownInterval);
+                clearTimeout(emergencyTimer);
+                document.getElementById('emergencyModal').remove();
+                isEmergencyActive = false;
+                showToast('Emergency cancelled. Stay safe!', 'success');
+            };
+            
+            document.getElementById('confirmEmergency').onclick = () => {
+                clearInterval(countdownInterval);
+                clearTimeout(emergencyTimer);
+                document.getElementById('emergencyModal').remove();
+                isEmergencyActive = false;
+                sendEmergencyAlert(triggerType, triggerWord);
+            };
+            
+            emergencyTimer = setTimeout(() => {
+                if (isEmergencyActive) {
+                    clearInterval(countdownInterval);
+                    document.getElementById('emergencyModal')?.remove();
+                    isEmergencyActive = false;
+                    sendEmergencyAlert(triggerType, triggerWord);
+                }
+            }, 10000);
+        }
+        
+        async function sendEmergencyAlert(triggerType, triggerWord = null) {
+            console.log('Sending emergency alert...');
+            showToast('🚨 Sending emergency alert...', 'warning');
+            
+            let location = currentPosition;
+            if (!location) {
+                location = await new Promise((resolve) => {
+                    if (navigator.geolocation) {
+                        navigator.geolocation.getCurrentPosition(
+                            (pos) => resolve({lat: pos.coords.latitude, lon: pos.coords.longitude}),
+                            () => resolve(null),
+                            {timeout: 5000}
+                        );
+                    } else {
+                        resolve(null);
+                    }
+                });
+            }
+            
+            let endpoint = '';
+            let body = {};
+            
+            if (triggerType === 'voice') {
+                endpoint = '/voice_detect';
+                body = { text: triggerWord || 'help', latitude: location?.lat, longitude: location?.lon };
+            } else if (triggerType === 'shake') {
+                endpoint = '/sos_pattern';
+                body = { pattern: 'shake', latitude: location?.lat, longitude: location?.lon };
+            } else {
+                endpoint = '/panic';
+                body = { latitude: location?.lat, longitude: location?.lon };
+            }
+            
+            try {
+                const response = await fetch(endpoint, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(body)
+                });
+                
+                const data = await response.json();
+                console.log('Alert response:', data);
+                
+                if (data.alert === true || data.success === true) {
+                    let message = '🚨 EMERGENCY ALERT SENT!\n\n';
+                    message += '='.repeat(40) + '\n\n';
+                    
+                    if (data.notification) {
+                        if (data.notification.guardian_names && data.notification.guardian_names.length > 0) {
+                            message += `👨‍👩‍👧 GUARDIANS NOTIFIED (${data.notification.guardian_names.length}):\n`;
+                            data.notification.guardian_names.forEach(name => {
+                                message += `   ✓ ${name}\n`;
+                            });
+                            message += '\n';
+                        } else {
+                            message += `👨‍👩‍👧 GUARDIANS: 0 notified (No guardians added)\n\n`;
+                        }
+                        
+                        if (data.notification.police_names && data.notification.police_names.length > 0) {
+                            message += `👮 POLICE STATIONS NOTIFIED (${data.notification.police_names.length}):\n`;
+                            data.notification.police_names.forEach(name => {
+                                message += `   ✓ ${name}\n`;
+                            });
+                            message += '\n';
+                        } else {
+                            message += `👮 POLICE: 0 notified\n\n`;
+                        }
+                        
+                        if (data.notification.ngo_names && data.notification.ngo_names.length > 0) {
+                            message += `🆘 NGOS NOTIFIED (${data.notification.ngo_names.length}):\n`;
+                            data.notification.ngo_names.forEach(name => {
+                                message += `   ✓ ${name}\n`;
+                            });
+                            message += '\n';
+                        }
+                    }
+                    
+                    message += '='.repeat(40) + '\n\n';
+                    if (location) {
+                        message += `📍 Location: ${location.lat.toFixed(6)}, ${location.lon.toFixed(6)}\n`;
+                    }
+                    message += `⏰ Time: ${new Date().toLocaleString()}\n\n🚨 Help is on the way!`;
+                    alert(message);
+                    showToast('✅ Emergency alert sent to Guardians, Police & NGOs!', 'success');
+                } else {
+                    console.warn('Alert response did not indicate success:', data);
+                    alert('⚠️ Alert triggered but no notification sent. Please check your connection.');
+                }
+            } catch (error) {
+                console.error('Error sending alert:', error);
+                alert('⚠️ Error sending alert. Please check your connection.');
+            }
+        }
+        
+        function triggerManualEmergency() {
+            showEmergencyModal('manual', 'Panic Button');
+        }
+        
+        // ==================== MULTI-LANGUAGE VOICE SUPPORT ====================
+        const distressWordsList = [
+            'help', 'bachao', 'madad', 'danger', 'emergency', 'police', 
+            'attack', 'save me', 'rescue', 'kidnap', 'stalking', 'follow',
+            'बचाओ', 'मदद', 'खतरा', 'पुलिस', 'सहायता', 'save'
+        ];
+        
+        function detectDistressWord(text) {
+            const lowerText = text.toLowerCase();
+            
+            for (let word of distressWordsList) {
+                if (lowerText.includes(word.toLowerCase())) {
+                    let displayWord = word;
+                    if (word === 'bachao') displayWord = 'बचाओ (Bachao)';
+                    if (word === 'madad') displayWord = 'मदद (Madad)';
+                    return { detected: true, word: displayWord, original: word };
+                }
+            }
+            return { detected: false };
+        }
+        
+        function requestMicrophonePermission() {
+            if (!window.SpeechRecognition && !window.webkitSpeechRecognition) {
+                alert('Voice detection is not supported in this browser. Please use Chrome, Edge, or Safari.');
+                return;
+            }
+            
+            if (permissionRequested) {
+                if (recognition && !isListening) {
+                    try {
+                        recognition.start();
+                    } catch(e) {
+                        console.error('Error starting recognition:', e);
+                        initVoiceDetection();
+                    }
+                }
+                return;
+            }
+            
+            navigator.mediaDevices.getUserMedia({ audio: true })
+                .then(function(stream) {
+                    stream.getTracks().forEach(track => track.stop());
+                    initVoiceDetection();
+                    permissionRequested = true;
+                    showToast('🎤 Microphone access granted! Say "help" or "bachao" for emergency.', 'success');
+                })
+                .catch(function(err) {
+                    console.error('Microphone error:', err);
+                    showToast('❌ Microphone access denied. Voice detection disabled.', 'danger');
+                });
+        }
+        
+        function initVoiceDetection() {
+            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+            
+            if (SpeechRecognition) {
+                recognition = new SpeechRecognition();
+                recognition.continuous = true;
+                recognition.interimResults = true;
+                recognition.lang = 'hi-IN';
+                
+                recognition.onstart = function() {
+                    isListening = true;
+                    const micBtn = document.getElementById('microphoneBtn');
+                    if (micBtn) micBtn.classList.add('active');
+                    const statusCard = document.getElementById('voiceStatusCard');
+                    const statusText = document.getElementById('voiceStatusText');
+                    const langIndicator = document.getElementById('languageIndicator');
+                    if (statusCard) statusCard.classList.add('active');
+                    if (statusText) statusText.innerHTML = '🎤 Listening... Say "help" or "bachao"';
+                    if (langIndicator) langIndicator.style.display = 'inline-block';
+                    console.log('Voice recognition started');
+                };
+                
+                recognition.onerror = function(event) {
+                    console.error('Recognition error:', event.error);
+                    if (event.error === 'not-allowed') {
+                        showToast('❌ Microphone access denied. Please allow microphone access.', 'danger');
+                    }
+                };
+                
+                recognition.onend = function() {
+                    console.log('Recognition ended, isListening:', isListening);
+                    if (isListening) {
+                        try {
+                            recognition.start();
+                        } catch(e) {
+                            console.error('Error restarting recognition:', e);
+                            isListening = false;
+                            const micBtn = document.getElementById('microphoneBtn');
+                            if (micBtn) micBtn.classList.remove('active');
+                            const statusCard = document.getElementById('voiceStatusCard');
+                            if (statusCard) statusCard.classList.remove('active');
+                        }
+                    }
+                };
+                
+                recognition.onresult = function(event) {
+                    let transcript = '';
+                    for (let i = event.resultIndex; i < event.results.length; i++) {
+                        transcript += event.results[i][0].transcript;
+                    }
+                    console.log('🎤 Heard:', transcript);
+                    
+                    const distressResult = detectDistressWord(transcript);
+                    
+                    if (distressResult.detected && !isEmergencyActive) {
+                        console.log(`🚨 Distress detected: "${distressResult.word}"`);
+                        showToast(`🎤 Detected: "${distressResult.word}" - Triggering emergency!`, 'warning');
+                        showEmergencyModal('voice', distressResult.word);
+                    }
+                };
+                
+                try {
+                    recognition.start();
+                } catch(e) {
+                    console.error('Error starting recognition:', e);
+                }
+            } else {
+                alert('Voice detection not supported in this browser. Please use Chrome or Edge.');
+            }
+        }
+        
+        function showToast(message, type) {
+            let toast = document.createElement('div');
+            toast.innerHTML = message;
+            const colors = { success: '#28a745', danger: '#dc3545', warning: '#ff9800', info: '#2196f3' };
+            toast.style.cssText = `
+                position: fixed; bottom: 100px; right: 20px; background: ${colors[type] || colors.info};
+                color: white; padding: 12px 20px; border-radius: 8px; z-index: 10001;
+                font-size: 14px; font-weight: 500; box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+                animation: slideIn 0.3s ease; max-width: 300px;
+            `;
+            document.body.appendChild(toast);
+            setTimeout(() => {
+                if (toast && toast.remove) toast.remove();
+            }, 4000);
+        }
+        
+        // ==================== SHAKE DETECTION ====================
+        let lastShake = 0;
+        let shakeCount = 0;
+        
+        function initShakeDetection() {
+            if (window.DeviceMotionEvent) {
+                window.addEventListener('devicemotion', function(e) {
+                    let acc = e.accelerationIncludingGravity;
+                    let x = Math.abs(acc.x || 0);
+                    let y = Math.abs(acc.y || 0);
+                    let z = Math.abs(acc.z || 0);
+                    let magnitude = x + y + z;
+                    
+                    if (magnitude > 35) {
+                        let now = Date.now();
+                        if (now - lastShake < 500) {
+                            shakeCount++;
+                            if (shakeCount >= 3 && !isEmergencyActive) {
+                                console.log('Shake pattern detected!');
+                                showToast('📱 Shake detected! Triggering emergency...', 'warning');
+                                showEmergencyModal('shake', 'Phone Shaken');
+                                shakeCount = 0;
+                            }
+                        } else {
+                            shakeCount = 1;
+                        }
+                        lastShake = now;
+                    }
+                });
+                console.log('Shake detection initialized');
+            } else {
+                console.log('DeviceMotionEvent not supported');
+            }
+        }
+        
+        // ==================== INITIALIZATION ====================
+        // Start location tracking
+        refreshLocation();
+        
+        // Start shake detection
+        initShakeDetection();
+        
+        // Ask for microphone permission after 2 seconds
+        setTimeout(() => {
+            if(confirm('🎤 Enable voice detection for emergency alerts?\n\nYou can say "help" or "bachao" to trigger emergency.\n\nClick OK to allow microphone access.')) {
+                requestMicrophonePermission();
+            }
+        }, 2000);
+        
+        // Auto refresh location every 30 seconds
+        setInterval(refreshLocation, 30000);
+        
+        // Add animation keyframes
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes slideIn {
+                from { transform: translateX(100%); opacity: 0; }
+                to { transform: translateX(0); opacity: 1; }
+            }
+        `;
+        document.head.appendChild(style);
+        
+        console.log('Dashboard initialized successfully');
+    </script>
+</body>
+</html>

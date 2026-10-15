@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Emergency Help - SafeHer</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f5f5f5;
+        }
+        
+        .navbar {
+            background: #ff4d6d;
+            padding: 1rem 2rem;
+            color: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        
+        .navbar h2 {
+            cursor: pointer;
+        }
+        
+        .navbar a {
+            color: white;
+            text-decoration: none;
+            margin-left: 1rem;
+            padding: 0.5rem 1rem;
+            border-radius: 5px;
+        }
+        
+        .navbar a:hover {
+            background: rgba(255,255,255,0.2);
+        }
+        
+        .container {
+            max-width: 600px;
+            margin: 3rem auto;
+            padding: 0 2rem;
+        }
+        
+        .card {
+            background: white;
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+        
+        h2 {
+            color: #ff4d6d;
+            margin-bottom: 1rem;
+        }
+        
+        .help-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+        
+        .help-btn {
+            padding: 1rem;
+            border: none;
+            border-radius: 5px;
+            font-size: 1.1rem;
+            cursor: pointer;
+            color: white;
+            transition: transform 0.3s;
+            width: 100%;
+        }
+        
+        .help-btn:hover {
+            transform: translateY(-2px);
+        }
+        
+        .police {
+            background: #1a237e;
+        }
+        
+        .women {
+            background: #c2185b;
+        }
+        
+        .ngo {
+            background: #ff6f00;
+        }
+        
+        .footer {
+            background: #333;
+            color: white;
+            text-align: center;
+            padding: 1.5rem;
+            margin-top: 2rem;
+        }
+        
+        @media (max-width: 768px) {
+            .navbar {
+                flex-direction: column;
+                gap: 1rem;
+                text-align: center;
+            }
+            
+            .navbar div {
+                display: flex;
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <h2 onclick="location.href='/'">SafeHer</h2>
+        <div>
+            <a href="/">Home</a>
+            <a href="/predict">Safety Check</a>
+            <a href="/help">Emergency</a>
+            <a href="/feedback">Feedback</a>
+            {% if user %}
+                <a href="/profile">Profile</a>
+                <a href="/logout">Logout</a>
+            {% else %}
+                <a href="/login">Login</a>
+                <a href="/register">Register</a>
+            {% endif %}
+        </div>
+    </nav>
+    
+    <div class="container">
+        <div class="card">
+            <h2>🚨 Emergency Helpline</h2>
+            <p>Immediate assistance for emergency situations</p>
+            
+            <div class="help-buttons">
+                <a href="tel:100">
+                    <button class="help-btn police">🚔 Police - 100</button>
+                </a>
+                <a href="tel:1091">
+                    <button class="help-btn women">👮 Women Helpline - 1091</button>
+                </a>
+                <a href="tel:181">
+                    <button class="help-btn ngo">🆘 NGO Help - 181</button>
+                </a>
+            </div>
+            
+            <div style="margin-top: 2rem; padding-top: 1rem; border-top: 1px solid #eee;">
+                <p style="color: #666;">In case of emergency, stay calm and call for help immediately.</p>
+                <p style="color: #666; margin-top: 0.5rem;">Share your location with trusted contacts.</p>
+            </div>
+        </div>
+    </div>
+    
+    <div class="footer">
+        <p>© 2024 SafeHer - Women Safety System</p>
+    </div>
+</body>
+</html>

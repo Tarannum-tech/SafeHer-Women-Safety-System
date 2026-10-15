@@ -1,0 +1,824 @@
+<!-- <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - SafeHer</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: #f5f7fa;
+        }
+        
+        .navbar {
+            background: #ff4d6d;
+            padding: 1rem 5%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: white;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            cursor: pointer;
+        }
+        
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            margin-left: 1.5rem;
+            transition: all 0.3s;
+        }
+        
+        .nav-links a:hover {
+            color: #ffd966;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 80px auto 0;
+            padding: 2rem;
+        }
+        
+        .welcome-card {
+            background: linear-gradient(135deg, #ff4d6d, #e63e5c);
+            color: white;
+            padding: 2rem;
+            border-radius: 20px;
+            margin-bottom: 2rem;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .welcome-card::before {
+            content: "⚙️";
+            position: absolute;
+            font-size: 150px;
+            opacity: 0.1;
+            right: -20px;
+            bottom: -40px;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        
+        .stat-card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 15px;
+            text-align: center;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.05);
+            transition: all 0.3s;
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+        
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: #ff4d6d;
+        }
+        
+        .stat-label {
+            color: #666;
+            margin-top: 0.5rem;
+        }
+        
+        .card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.05);
+            margin-bottom: 1.5rem;
+        }
+        
+        .card h3 {
+            color: #ff4d6d;
+            margin-bottom: 1rem;
+            font-size: 1.3rem;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        th, td {
+            padding: 0.75rem;
+            text-align: left;
+            border-bottom: 1px solid #eee;
+        }
+        
+        th {
+            background: #f8f9fa;
+            font-weight: 600;
+            color: #ff4d6d;
+        }
+        
+        .feedback-item {
+            background: #f8f9fa;
+            padding: 1rem;
+            border-radius: 10px;
+            margin-bottom: 1rem;
+        }
+        
+        .feedback-name {
+            font-weight: 600;
+            color: #ff4d6d;
+        }
+        
+        .feedback-date {
+            font-size: 0.8rem;
+            color: #999;
+            margin-top: 0.3rem;
+        }
+        
+        .footer {
+            background: #222;
+            color: white;
+            text-align: center;
+            padding: 1.5rem;
+            margin-top: 2rem;
+        }
+        
+        @media (max-width: 768px) {
+            .navbar {
+                flex-direction: column;
+                gap: 0.5rem;
+                padding: 1rem;
+            }
+            
+            .nav-links {
+                display: flex;
+                flex-wrap: wrap;
+                justify-content: center;
+                gap: 0.5rem;
+            }
+            
+            .nav-links a {
+                margin-left: 0;
+                font-size: 0.9rem;
+            }
+            
+            .container {
+                padding: 1rem;
+                margin-top: 120px;
+            }
+            
+            table {
+                font-size: 0.8rem;
+            }
+            
+            th, td {
+                padding: 0.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo" onclick="location.href='/'">SafeHer Admin</div>
+        <div class="nav-links">
+            <a href="/">Home</a>
+            <a href="/predict">Safety Check</a>
+            <a href="/help">Emergency</a>
+            <a href="/feedback">Feedback</a>
+            <a href="/profile">Profile</a>
+            <a href="/logout">Logout</a>
+        </div>
+    </nav>
+    
+    <div class="container">
+        <div class="welcome-card">
+            <h1>Admin Dashboard 👑</h1>
+            <p>System Management & Analytics</p>
+        </div>
+        
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-number">{{ users|length }}</div>
+                <div class="stat-label">Total Users</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">{{ feedbacks|length }}</div>
+                <div class="stat-label">Total Feedback</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">6</div>
+                <div class="stat-label">Areas Covered</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">98%</div>
+                <div class="stat-label">User Satisfaction</div>
+            </div>
+        </div>
+        
+        <div class="card">
+            <h3>👥 User Management</h3>
+            <div style="overflow-x: auto;">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Username</th>
+                            <th>Full Name</th>
+                            <th>Email</th>
+                            <th>Role</th>
+                            <th>Phone</th>
+                            <th>Joined</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for user in users %}
+                        <tr>
+                            <td>{{ user.id }}</td>
+                            <td><strong>{{ user.username }}</strong></td>
+                            <td>{{ user.full_name }}</td>
+                            <td>{{ user.email }}</td>
+                            <td>
+                               
+
+                            </td>
+                            <td>{{ user.phone }}</td>
+                            <td>{{ user.created_at.strftime('%Y-%m-%d') }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        
+        <div class="card">
+            <h3>📝 User Feedback</h3>
+            {% if feedbacks %}
+                {% for feedback in feedbacks %}
+                <div class="feedback-item">
+                    <div class="feedback-name">⭐ {{ feedback.name }} ({{ feedback.email }})</div>
+                    <div style="margin-top: 0.5rem;">{{ feedback.message }}</div>
+                    <div class="feedback-date">{{ feedback.created_at.strftime('%B %d, %Y at %I:%M %p') }}</div>
+                </div>
+                {% endfor %}
+            {% else %}
+                <p style="color: #666;">No feedback received yet.</p>
+            {% endif %}
+        </div>
+        
+        <div class="card">
+            <h3>📊 System Statistics</h3>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem;">
+                <div>
+                    <strong>Total Users:</strong> {{ users|length }}
+                </div>
+                <div>
+                    <strong>Active Users:</strong> {{ users|length }}
+                </div>
+                <div>
+                    <strong>Guardians:</strong> {{ users|selectattr('role', 'equalto', 'guardian')|list|length }}
+                </div>
+                <div>
+                    <strong>Admins:</strong> {{ users|selectattr('role', 'equalto', 'admin')|list|length }}
+                </div>
+                <div>
+                    <strong>Total Feedback:</strong> {{ feedbacks|length }}
+                </div>
+                <div>
+                    <strong>Areas Covered:</strong> 6
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <footer class="footer">
+        <p>© 2024 SafeHer - Women Safety System | Admin Dashboard</p>
+    </footer>
+</body>
+</html> -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - SafeHer</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: #f5f7fa;
+        }
+        
+        .navbar {
+            background: linear-gradient(135deg, #ff4d6d, #e63e5c);
+            padding: 1rem 5%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: white;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            cursor: pointer;
+        }
+        
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            margin-left: 1.5rem;
+            transition: all 0.3s;
+        }
+        
+        .nav-links a:hover {
+            color: #ffd966;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 80px auto 0;
+            padding: 2rem;
+        }
+        
+        .welcome-card {
+            background: linear-gradient(135deg, #ff4d6d, #e63e5c);
+            color: white;
+            padding: 2rem;
+            border-radius: 20px;
+            margin-bottom: 2rem;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .welcome-card::before {
+            content: "👑";
+            position: absolute;
+            font-size: 150px;
+            opacity: 0.1;
+            right: -20px;
+            bottom: -40px;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        
+        .stat-card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 15px;
+            text-align: center;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.05);
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+        
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: #ff4d6d;
+        }
+        
+        .stat-label {
+            color: #666;
+            margin-top: 0.5rem;
+        }
+        
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.05);
+            transition: all 0.3s;
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+        
+        .card h3 {
+            color: #ff4d6d;
+            margin-bottom: 1rem;
+            font-size: 1.3rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        th, td {
+            padding: 0.75rem;
+            text-align: left;
+            border-bottom: 1px solid #eee;
+        }
+        
+        th {
+            background: #f8f9fa;
+            font-weight: 600;
+            color: #ff4d6d;
+        }
+        
+        .user-role {
+            padding: 0.2rem 0.5rem;
+            border-radius: 5px;
+            font-size: 0.7rem;
+            font-weight: 500;
+            display: inline-block;
+        }
+        
+        .role-user {
+            background: #4caf50;
+            color: white;
+        }
+        
+        .role-guardian {
+            background: #ff9800;
+            color: white;
+        }
+        
+        .role-admin {
+            background: #ff4d6d;
+            color: white;
+        }
+        
+        .feedback-item {
+            background: #f8f9fa;
+            padding: 1rem;
+            border-radius: 10px;
+            margin-bottom: 1rem;
+        }
+        
+        .feedback-name {
+            font-weight: 600;
+            color: #ff4d6d;
+        }
+        
+        .feedback-date {
+            font-size: 0.7rem;
+            color: #999;
+            margin-top: 0.3rem;
+        }
+        
+        .chart-container {
+            height: 200px;
+            display: flex;
+            align-items: flex-end;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+        
+        .chart-bar {
+            flex: 1;
+            background: linear-gradient(135deg, #ff4d6d, #e63e5c);
+            border-radius: 5px 5px 0 0;
+            transition: height 0.5s ease;
+            position: relative;
+        }
+        
+        .chart-label {
+            text-align: center;
+            margin-top: 0.5rem;
+            font-size: 0.7rem;
+            color: #666;
+        }
+        
+        .btn {
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            font-weight: 500;
+            transition: all 0.3s;
+            margin-top: 0.5rem;
+        }
+        
+        .btn-primary {
+            background: #ff4d6d;
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background: #e63e5c;
+            transform: translateY(-2px);
+        }
+        
+        .footer {
+            background: #222;
+            color: white;
+            text-align: center;
+            padding: 1.5rem;
+            margin-top: 2rem;
+        }
+        
+        @media (max-width: 768px) {
+            .navbar {
+                flex-direction: column;
+                gap: 0.5rem;
+                padding: 1rem;
+            }
+            
+            .nav-links {
+                display: flex;
+                flex-wrap: wrap;
+                justify-content: center;
+                gap: 0.5rem;
+            }
+            
+            .nav-links a {
+                margin-left: 0;
+                font-size: 0.9rem;
+            }
+            
+            .container {
+                padding: 1rem;
+                margin-top: 120px;
+            }
+            
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            table {
+                font-size: 0.8rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo" onclick="location.href='/'">SafeHer Admin</div>
+        <div class="nav-links">
+            <a href="/">Home</a>
+            <a href="/predict">Safety Check</a>
+            <a href="/help">Emergency</a>
+            <a href="/feedback">Feedback</a>
+            <a href="/profile">Profile</a>
+            <a href="/logout">Logout</a>
+        </div>
+    </nav>
+    
+    <div class="container">
+        <div class="welcome-card">
+            <h1>Admin Dashboard 👑</h1>
+            <p>System Management & Analytics</p>
+            <div style="margin-top: 1rem;">
+                <span style="background: rgba(255,255,255,0.2); padding: 0.3rem 1rem; border-radius: 50px; display: inline-block;">
+                    Welcome, {{ user.full_name }} | Super Admin Access
+                </span>
+            </div>
+        </div>
+        
+        <div class="stats-grid">
+            <div class="stat-card" onclick="showUsers()">
+                <div class="stat-number">{{ users|length }}</div>
+                <div class="stat-label">Total Users</div>
+            </div>
+            <div class="stat-card" onclick="showGuardians()">
+                <div class="stat-number">{{ users|selectattr('role', 'equalto', 'guardian')|list|length }}</div>
+                <div class="stat-label">Guardians</div>
+            </div>
+            <div class="stat-card" onclick="showUsers()">
+                <div class="stat-number">{{ users|selectattr('role', 'equalto', 'user')|list|length }}</div>
+                <div class="stat-label">Regular Users</div>
+            </div>
+            <div class="stat-card" onclick="showFeedback()">
+                <div class="stat-number">{{ feedbacks|length }}</div>
+                <div class="stat-label">Total Feedback</div>
+            </div>
+            <div class="stat-card" onclick="showAlerts()">
+                <div class="stat-number">156</div>
+                <div class="stat-label">Alerts This Month</div>
+            </div>
+            <div class="stat-card" onclick="showSafetyScore()">
+                <div class="stat-number">98%</div>
+                <div class="stat-label">Safety Score</div>
+            </div>
+        </div>
+        
+        <div class="dashboard-grid">
+            <div class="card">
+                <h3>👥 User Management</h3>
+                <div style="overflow-x: auto; max-height: 400px; overflow-y: auto;">
+                    <table>
+                        <thead>
+                            <tr style="position: sticky; top: 0; background: white;">
+                                <th>ID</th>
+                                <th>Username</th>
+                                <th>Full Name</th>
+                                <th>Role</th>
+                                <th>Phone</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for user in users %}
+                            <tr>
+                                <td>{{ user.id }}</td>
+                                <td><strong>{{ user.username }}</strong></td>
+                                <td>{{ user.full_name }}</td>
+                                <td>
+                                    <span class="user-role role-{{ user.role }}">
+                                        {% if user.role == 'user' %}👩 User
+                                        {% elif user.role == 'guardian' %}👨‍👩‍👧 Guardian
+                                        {% else %}👑 Admin{% endif %}
+                                    </span>
+                                </td>
+                                <td>{{ user.phone }}</td>
+                                <td><span style="color: #4caf50;">● Active</span></td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                <button class="btn btn-primary" style="margin-top: 1rem; width: 100%;" onclick="addNewUser()">➕ Add New User</button>
+            </div>
+            
+            <div class="card">
+                <h3>📊 System Analytics</h3>
+                <div>
+                    <div style="margin-bottom: 1rem;">
+                        <strong>User Growth (Last 7 Days)</strong>
+                        <div class="chart-container">
+                            <div style="flex: 1; text-align: center;">
+                                <div class="chart-bar" style="height: 120px;"></div>
+                                <div class="chart-label">Mon</div>
+                            </div>
+                            <div style="flex: 1; text-align: center;">
+                                <div class="chart-bar" style="height: 95px;"></div>
+                                <div class="chart-label">Tue</div>
+                            </div>
+                            <div style="flex: 1; text-align: center;">
+                                <div class="chart-bar" style="height: 140px;"></div>
+                                <div class="chart-label">Wed</div>
+                            </div>
+                            <div style="flex: 1; text-align: center;">
+                                <div class="chart-bar" style="height: 110px;"></div>
+                                <div class="chart-label">Thu</div>
+                            </div>
+                            <div style="flex: 1; text-align: center;">
+                                <div class="chart-bar" style="height: 160px;"></div>
+                                <div class="chart-label">Fri</div>
+                            </div>
+                            <div style="flex: 1; text-align: center;">
+                                <div class="chart-bar" style="height: 130px;"></div>
+                                <div class="chart-label">Sat</div>
+                            </div>
+                            <div style="flex: 1; text-align: center;">
+                                <div class="chart-bar" style="height: 100px;"></div>
+                                <div class="chart-label">Sun</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div style="margin-top: 1rem;">
+                        <strong>Safety Statistics</strong>
+                        <div style="margin-top: 0.5rem;">
+                            <div>✅ Safe Zones: 4</div>
+                            <div>⚠️ Warning Zones: 2</div>
+                            <div>🚨 Danger Zones: 1</div>
+                            <div>📍 Active Users: {{ users|selectattr('role', 'equalto', 'user')|list|length }}</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="card">
+            <h3>📝 Recent User Feedback</h3>
+            <div style="max-height: 300px; overflow-y: auto;">
+                {% if feedbacks %}
+                    {% for feedback in feedbacks %}
+                    <div class="feedback-item">
+                        <div class="feedback-name">⭐ {{ feedback.name }} ({{ feedback.email }})</div>
+                        <div style="margin-top: 0.5rem; color: #555;">{{ feedback.message }}</div>
+                        <div class="feedback-date">{{ feedback.created_at.strftime('%B %d, %Y at %I:%M %p') }}</div>
+                        <div style="margin-top: 0.5rem;">
+                            <button class="btn btn-primary" style="padding: 0.3rem 0.8rem; font-size: 0.75rem;">Reply</button>
+                            <button class="btn btn-primary" style="padding: 0.3rem 0.8rem; font-size: 0.75rem; background: #6c757d;">Mark as Read</button>
+                        </div>
+                    </div>
+                    {% endfor %}
+                {% else %}
+                    <p style="color: #666;">No feedback received yet.</p>
+                {% endif %}
+            </div>
+        </div>
+        
+        <div class="card">
+            <h3>🚨 Recent Safety Alerts</h3>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1rem;">
+                <div style="background: #f8f9fa; padding: 1rem; border-radius: 10px; border-left: 4px solid #ff9800;">
+                    <strong>⚠️ High Risk Area Alert</strong><br>
+                    User: Priya Sharma<br>
+                    Location: Kurla, Mumbai<br>
+                    Time: 2 min ago<br>
+                    Risk: 85%
+                </div>
+                <div style="background: #f8f9fa; padding: 1rem; border-radius: 10px; border-left: 4px solid #dc3545;">
+                    <strong>🚨 Emergency Panic Alert</strong><br>
+                    User: Neha Gupta<br>
+                    Location: Andheri, Mumbai<br>
+                    Time: 15 min ago<br>
+                    Status: Responded
+                </div>
+                <div style="background: #f8f9fa; padding: 1rem; border-radius: 10px; border-left: 4px solid #4caf50;">
+                    <strong>✅ Movement Detected</strong><br>
+                    User: Kavita Singh<br>
+                    Location: Bandra, Mumbai<br>
+                    Time: 30 min ago<br>
+                    Status: Safe
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <footer class="footer">
+        <p>© 2024 SafeHer - Women Safety System | Admin Dashboard</p>
+        <p style="font-size: 0.8rem; margin-top: 0.5rem;">System Status: 🟢 All Systems Operational</p>
+    </footer>
+    
+    <script>
+        function showUsers() {
+            alert("Total Users: {{ users|length }}\n\n👩 Regular Users: {{ users|selectattr('role', 'equalto', 'user')|list|length }}\n👨‍👩‍👧 Guardians: {{ users|selectattr('role', 'equalto', 'guardian')|list|length }}\n👑 Admins: {{ users|selectattr('role', 'equalto', 'admin')|list|length }}");
+        }
+        
+        function showGuardians() {
+            alert("👨‍👩‍👧 Guardians List:\n\n1. testguardian (Test Guardian)\n2. guardian_demo (Demo Guardian)\n\nTotal: {{ users|selectattr('role', 'equalto', 'guardian')|list|length }} guardians monitoring {{ users|selectattr('role', 'equalto', 'user')|list|length }} users.");
+        }
+        
+        function showFeedback() {
+            alert("📝 Total Feedback: {{ feedbacks|length }}\n\nAverage Rating: 4.8/5 ⭐\nResponse Rate: 100%\nSatisfaction Score: 98%");
+        }
+        
+        function showAlerts() {
+            alert("🚨 Alert Statistics (Last 30 Days):\n\n• Total Alerts: 156\n• Emergency Panic: 23\n• High Risk Areas: 45\n• Motion Detection: 88\n\nResponse Time: 2.5 min avg\nResolution Rate: 97%");
+        }
+        
+        function showSafetyScore() {
+            alert("📊 Safety Score Analysis:\n\nOverall Safety Score: 98%\n\nArea-wise:\n✅ Andheri: 82%\n✅ Bandra: 95%\n⚠️ Kurla: 65%\n✅ Powai: 92%\n✅ Dadar: 78%\n✅ Thane: 96%\n\nRecommendation: Improve safety in Kurla area.");
+        }
+        
+        function addNewUser() {
+            let role = prompt("Select user role:\n1. User\n2. Guardian\n\nEnter 1 or 2:");
+            if(role === "1") {
+                alert("📝 Add new user form would open here.\nUsername: ________\nEmail: ________\nPhone: ________");
+            } else if(role === "2") {
+                alert("📝 Add new guardian form would open here.\nUsername: ________\nEmail: ________\nPhone: ________");
+            }
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,74 @@
+5. Database Schema
+User Table
+Column	Type	Description
+id	INTEGER	Primary Key
+username	VARCHAR	Unique username
+email	VARCHAR	Unique email
+password_hash	VARCHAR	Hashed password
+phone	VARCHAR	Contact number
+full_name	VARCHAR	User's full name
+role	VARCHAR	user/guardian/admin
+created_at	DATETIME	Registration date
+Alert Table
+Column	Type	Description
+id	INTEGER	Primary Key
+user_id	INTEGER	Foreign Key to User
+alert_type	VARCHAR	voice/shake/panic/auto
+risk_level	INTEGER	0-100 risk percentage
+latitude	FLOAT	GPS coordinate
+longitude	FLOAT	GPS coordinate
+location_address	VARCHAR	Human-readable address
+trigger_word	VARCHAR	Word that triggered alert
+status	VARCHAR	active/resolved
+created_at	DATETIME	Alert timestamp
+GuardianRelation Table
+Column	Type	Description
+id	INTEGER	Primary Key
+user_id	INTEGER	Child user
+guardian_id	INTEGER	Guardian user
+relationship	VARCHAR	Mother/Father/Sister
+
+SYstem arctitectur
+
+┌─────────────────────────────────────────────────────────┐
+│                    Frontend (Browser)                    │
+├─────────────────────────────────────────────────────────┤
+│  HTML/CSS  │  JavaScript  │  Leaflet Map  │  Voice API  │
+└─────────────────────────────────────────────────────────┘
+                              │
+                              ▼
+┌─────────────────────────────────────────────────────────┐
+│              Backend (Flask Server)                      │
+├─────────────────────────────────────────────────────────┤
+│  Routes  │  ML Model  │  Database  │  Alert System      │
+└─────────────────────────────────────────────────────────┘
+                              │
+                              ▼
+┌─────────────────────────────────────────────────────────┐
+│                Database (SQLite)                         │
+├─────────────────────────────────────────────────────────┤
+│  Users  │  Alerts  │  Locations  │  Guardian Relations  │
+└─────────────────────────────────────────────────────────┘
+
+work flow diagram
+
+User Says "help"
+      ↓
+Web Speech API → Text: "help"
+      ↓
+Keyword Detected → Show Emergency Modal
+      ↓
+10-Second Countdown
+      ↓
+No Cancel → Send Emergency Alert
+      ↓
+┌─────────────────────────────────────┐
+│  send_emergency_alert() function    │
+├─────────────────────────────────────┤
+│  1. Get all guardians from database │
+│  2. Find nearby police stations     │
+│  3. Get all NGOs from list          │
+│  4. Send notifications to all       │
+└─────────────────────────────────────┘
+      ↓
+Alert Sent to Guardians, Police, NGOs

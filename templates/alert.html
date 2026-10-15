@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Alert - SafeHer</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 2rem;
+        }
+        
+        .alert-container {
+            background: white;
+            padding: 2.5rem;
+            border-radius: 20px;
+            text-align: center;
+            max-width: 500px;
+            animation: shake 0.5s ease;
+        }
+        
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-10px); }
+            75% { transform: translateX(10px); }
+        }
+        
+        .alert-icon {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+            animation: pulse 1s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+        
+        h1 {
+            color: #dc3545;
+            margin-bottom: 1rem;
+            font-size: 2rem;
+        }
+        
+        .risk-meter {
+            width: 100%;
+            height: 30px;
+            background: #e0e0e0;
+            border-radius: 15px;
+            overflow: hidden;
+            margin: 1.5rem 0;
+        }
+        
+        .risk-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #ff9800, #dc3545);
+            /* width: {{ risk }}%; */
+            transition: width 1s ease;
+        }
+        
+        .risk-text {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #dc3545;
+            margin: 1rem 0;
+        }
+        
+        .buttons {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+        
+        .btn {
+            flex: 1;
+            padding: 0.8rem;
+            border: none;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .btn-danger {
+            background: #dc3545;
+            color: white;
+        }
+        
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+        }
+        
+        .area-info {
+            margin-top: 1.5rem;
+            padding-top: 1rem;
+            border-top: 1px solid #eee;
+            color: #666;
+        }
+        
+        @media (max-width: 768px) {
+            .alert-container {
+                padding: 1.5rem;
+                margin: 1rem;
+            }
+            
+            .buttons {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="alert-container">
+        <div class="alert-icon">🚨</div>
+        <h1>DANGER DETECTED!</h1>
+        <p>This area has been identified as potentially unsafe. Please exercise extreme caution.</p>
+        
+        <div class="risk-meter">
+            <div class="risk-fill"></div>
+
+        </div>
+        
+        <div class="risk-text">Risk Level: {{ risk }}%</div>
+        
+        <div class="buttons">
+            <button class="btn btn-danger" onclick="location.href='/help'">📞 Get Help Now</button>
+            <button class="btn btn-secondary" onclick="location.href='/predict'">🔄 Check Again</button>
+        </div>
+        
+        <div class="area-info">
+            <strong>Area:</strong> {{ area }}<br>
+            <strong>Recommendation:</strong> Leave the area immediately if possible, stay alert, and keep emergency contacts ready.
+        </div>
+    </div>
+</body>
+</html>
