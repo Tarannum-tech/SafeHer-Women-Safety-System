@@ -258,12 +258,12 @@ Made with ❤️ for Women Safety
 
 ## 🔧 Kya Change Kiya?
 
-| Issue | Fix |
-|-------|-----|
-| `text` word extra tha | Remove kar diya |
-| Duplicate content | Remove kar diya |
-| Code blocks properly close nahi the | Sahi se close kiye |
-| Project structure 2 baar tha | Ek baar kar diya |
+| Issue                                   | Fix |
+|-------                                  |-----|
+| `text` word extra tha                   | Remove kar diya |
+| Duplicate content                       | Remove kar diya |
+| Code blocks properly close nahi the     | Sahi se close kiye |
+| Project structure 2 baar tha            | Ek baar kar diya |
 
 ---
 
