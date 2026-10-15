@@ -203,33 +203,32 @@ Voice detected by Web Speech API
 If not cancelled → Emergency alert
       ↓
 ┌─────────────────────────────────┐
-│  Sent to:                        │
-│  ✅ Guardians                    │
-│  ✅ Nearby Police Stations       │
-│  ✅ Women Safety NGOs            │
+│  Sent to:                       │
+│  ✅ Guardians                   │
+│  ✅ Nearby Police Stations      │
+│  ✅ Women Safety NGOs           │
 └─────────────────────────────────┘
       ↓
 Alert shows location on map
+
 🧠 Algorithms Used
-Algorithm	Purpose
-Decision Tree Classifier	Area safety prediction
-Keyword Spotting	Voice distress detection
-Haversine Formula	Distance to police stations
-Multi-factor Risk Scoring	Time + Day + Weather analysis
+Algorithm	                                 Purpose
+Decision Tree Classifier	             Area safety prediction
+Keyword Spotting	                     Voice distress detection
+Haversine Formula	                      Distance to police stations
+Multi-factor Risk Scoring	               Time + Day + Weather analysis
+
 📈 Key Achievements
+
 ✅ 85% voice detection accuracy
-
 ✅ 10-second emergency response
-
 ✅ 9+ Indian languages supported
-
 ✅ 3 user roles (User, Guardian, Admin)
-
 ✅ 6 database tables properly designed
-
 ✅ 100% responsive UI
 
 🔮 Future Enhancements
+
 □ SMS integration via Twilio
 □ WhatsApp alerts
 □ Email notifications
@@ -238,28 +237,22 @@ Multi-factor Risk Scoring	Time + Day + Weather analysis
 □ AI chatbot for legal help
 □ Video streaming during emergency
 □ Blockchain-based alert logging
+
 👩‍💻 Author
 Tarannum
-
 GitHub: @Tarannum-tech
-
 Project Link: SafeHer-Women-Safety-System
 
 🙏 Acknowledgments
 OpenStreetMap - Free map tiles
-
 scikit-learn - ML algorithms
-
 Flask - Web framework
-
 Leaflet.js - Interactive maps
 
 ⭐ Show Your Support
+
 If this project helped you, please give it a ⭐ star!
-
 Made with ❤️ for Women Safety
-
-text
 
 ---
 
