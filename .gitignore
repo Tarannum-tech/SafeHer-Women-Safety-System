@@ -22,5 +22,10 @@ venv/
 .venv/
 env/
 
-# Model files (optional - agar size zyada hai toh)
-# model.pkl
+# Temporary files
+tempCodeRunnerFile.py
+*~
+
+# OS files
+.DS_Store
+Thumbs.db
