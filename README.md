@@ -122,6 +122,7 @@ text
 git clone https://github.com/Tarannum-tech/SafeHer-Women-Safety-System.git
 cd SafeHer-Women-Safety-System
 
+ project Structure
 SafeHer-Women-Safety-System/
 │
 ├── app.py # Main Flask application
@@ -149,6 +150,33 @@ SafeHer-Women-Safety-System/
 └── static/ # Static files
 └── js/
 └── voice_detection.js
+
+## 📸 Screenshots
+
+### 🏠 Home Page
+![Home Page](screenshots/home-page.png.jpeg)
+![Home Page](screenshots/smart-feature.png.jpeg)
+![Home Page](screenshots/feedback.png.jpeg)
+![Home Page](screenshots/create-account.png.jpeg)
+![Home Page](screenshots/alert-popup.png.jpeg)
+![Home Page](screenshots/check-area-safety.png.jpegjpeg)
+
+### 👩 User Dashboard
+![User Dashboard](screenshots/user-dashboard.png.jpeg)
+
+### 🎤 Voice Detection
+![Voice Detection](screenshots/voice-detection-sent.png.jpeg)
+![Voice Detection](screenshots/voice-deteact.png.jpeg)
+
+
+### 🚨 Emergency Alert
+![Emergency Alert](screenshots/Emergency-help-line.png.jpeg)
+
+### 👨‍👩‍👧 Guardian Dashboard
+![Guardian Dashboard](screenshots/guardian-dashboard.png.jpeg)
+
+### 👑 Admin Dashboard
+![Admin Dashboard](screenshots/admin-dashboard.png.jpeg)
 
 
 
