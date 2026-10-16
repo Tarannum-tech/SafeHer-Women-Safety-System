@@ -8,7 +8,7 @@
 
 > **An intelligent women safety system that detects emergencies through voice commands, shake detection, and panic button, then automatically alerts guardians, nearby police stations, and NGOs with real-time location.**
 
-🔗 **[Live Demo]( https://safeher-women-safety-system-ldws.onrender.com)** | 📂 **[GitHub Repo](https://github.com/Tarannum-tech/SafeHer-Women-Safety-System)**
+🔗 **[Live Demo]( https://safeher-women-safety-system-2.onrender.com)** | 📂 **[GitHub Repo](https://github.com/Tarannum-tech/SafeHer-Women-Safety-System)**
 
 ---
 
